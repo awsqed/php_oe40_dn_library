@@ -18,6 +18,7 @@ class CreateFollowsTable extends Migration
             $table->foreignId('user_id')->constrained();
             $table->morphs('followable');
             $table->timestamp('followed_at');
+            $table->softDeletes();
         });
     }
 

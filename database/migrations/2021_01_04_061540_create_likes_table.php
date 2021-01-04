@@ -18,6 +18,7 @@ class CreateLikesTable extends Migration
             $table->foreignId('user_id')->constrained();
             $table->foreignId('book_id')->constrained();
             $table->timestamp('liked_at');
+            $table->softDeletes();
         });
     }
 
