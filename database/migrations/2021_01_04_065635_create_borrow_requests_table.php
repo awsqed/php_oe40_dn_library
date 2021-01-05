@@ -23,7 +23,7 @@ class CreateBorrowRequestsTable extends Migration
             $table->boolean('status')->nullable();
             $table->timestamp('processed_at');
             $table->timestamp('returned_at');
-            $table->timestamps();
+            $table->timestamp('created_at');
         });
     }
 

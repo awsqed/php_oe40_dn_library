@@ -11,33 +11,46 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    protected $guarded = [];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'user_permissions')->using(UserPermission::class);
+    }
+
+    public function bookBorrowRequests()
+    {
+        return $this->belongsToMany(Book::class, 'borrow_requests')->using(BorrowRequest::class);
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    public function followings()
+    {
+        return $this->hasMany(Follow::class);
+    }
+
+    public function followers()
+    {
+        return $this->morphMany(Follow::class, 'followable');
+    }
+
+    public function reviews()
+    {
+        return $this->belongsToMany(Book::class, 'review')->using(Review::class);
+    }
+
 }
