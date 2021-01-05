@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', function() {
+    return view('home');
+})->name('home');
+
+Route::get('/dashboard', function() {
+    return view('dashboard.index');
+})->name('dashboard');
+
+Route::get('/locale/{locale?}', function($locale = 'en') {
+    App::setLocale($locale);
+    Session::put('locale', $locale);
+
+    return redirect()->back();
 });
