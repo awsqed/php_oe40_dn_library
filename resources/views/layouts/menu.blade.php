@@ -1,11 +1,11 @@
 <li class="nav-item">
-    <a href="#" class="nav-link {{ Request::routeIs('dashboard') ? 'active' : '' }}">
+    <a href="{{ route('dashboard') }}" class="nav-link {{ Request::routeIs('dashboard') ? 'active' : '' }}">
         <i class="fas fa-tachometer-alt nav-icon"></i>
         <p>{{ trans('dashboard.dashboard') }}</p>
     </a>
 </li>
 
-<li class="nav-item has-treeview">
+<li class="nav-item has-treeview {{ Request::routeIs('permissions.index') ? 'menu-open' : '' }}">
     <a href="#" class="nav-link">
         <i class="nav-icon fas fa-users"></i>
         <p>
@@ -21,9 +21,9 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{ route('permissions.index') }}" class="nav-link {{ Request::routeIs('permissions.index') ? 'active' : '' }}">
                 <i class="fas fa-unlock-alt nav-icon"></i>
-                <p>{{ trans('dashboard.sidebar.user.permissions') }}</p>
+                <p>{{ trans('dashboard.permissions') }}</p>
             </a>
         </li>
     </ul>

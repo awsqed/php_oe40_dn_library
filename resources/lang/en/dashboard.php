@@ -5,10 +5,10 @@ return [
     'admin-panel' => 'Admin Panel',
     'dashboard' => 'Dashboard',
     'search' => 'Search',
+    'permissions' => 'Permissions',
     'sidebar' => [
         'user' => [
             'users' => 'Users',
-            'permissions' => 'Permissions',
         ],
         'book' => [
             'books' => 'Books',

@@ -12,6 +12,7 @@
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <link href="{{ mix('css/all.css') }}" rel="stylesheet">
     @yield('third_party_stylesheets')
     @stack('page_css')
 </head>
@@ -64,6 +65,7 @@
         @include('layouts.sidebar')
 
         <div class="content-wrapper">
+            {{ $breadcrumbs }}
             <section class="content">
                 {{ $slot }}
             </section>
