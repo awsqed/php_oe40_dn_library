@@ -15,16 +15,18 @@ class BorrowRequestSeeder extends Seeder
     {
         $faker = \Faker\Factory::create();
         for ($i = 0; $i < 10; $i++) {
-            \App\Models\BorrowRequest::create([
-                'user_id' => $faker->randomDigit + 1,
-                'book_id' => $faker->randomDigit + 1,
-                'from' => $faker->dateTime,
-                'to' => $faker->dateTime,
-                'note' => $faker->sentence,
-                'status' => $faker->boolean,
-                'processed_at' => $faker->dateTime,
-                'returned_at' => $faker->dateTime,
-            ]);
+            for ($j = 0; $j < 100; $j++) {
+                if ($faker->boolean) {
+                    \App\Models\BorrowRequest::create([
+                        'user_id' => $i + 1,
+                        'book_id' => $j + 1,
+                        'from' => $faker->dateTimeBetween('-30 days', "-5 days"),
+                        'to' => $faker->dateTimeBetween('+15 days', "+30 days"),
+                        'note' => $faker->sentence,
+                        'status' => false,
+                    ]);
+                }
+            }
         }
     }
 }

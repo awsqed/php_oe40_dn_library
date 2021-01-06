@@ -15,11 +15,15 @@ class LikeSeeder extends Seeder
     {
         $faker = \Faker\Factory::create();
         for ($i = 0; $i < 10; $i++) {
-            \App\Models\Like::create([
-                'user_id' => $faker->randomDigit + 1,
-                'book_id' => $faker->randomDigit + 1,
-                'liked_at' => $faker->unixTime,
-            ]);
+            for ($j = 0; $j < 100; $j++) {
+                if ($faker->boolean) {
+                    \App\Models\Like::create([
+                        'user_id' => $i + 1,
+                        'book_id' => $j + 1,
+                        'liked_at' => $faker->unixTime,
+                    ]);
+                }
+            }
         }
     }
 }

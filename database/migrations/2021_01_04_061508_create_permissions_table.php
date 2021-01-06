@@ -15,8 +15,9 @@ class CreatePermissionsTable extends Migration
     {
         Schema::create('permissions', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('description')->nullable();
+            $table->foreignId('parent_id')->nullable()->constrained('permissions');
         });
     }
 
@@ -27,6 +28,8 @@ class CreatePermissionsTable extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('permissions');
+        Schema::enableForeignKeyConstraints();
     }
 }

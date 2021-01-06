@@ -17,12 +17,12 @@ class CreateBorrowRequestsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('book_id')->constrained();
-            $table->timestamp('from');
-            $table->timestamp('to');
+            $table->date('from');
+            $table->date('to');
             $table->string('note')->nullable();
             $table->boolean('status')->nullable();
-            $table->timestamp('processed_at');
-            $table->timestamp('returned_at');
+            $table->timestamp('processed_at')->nullable();
+            $table->timestamp('returned_at')->nullable();
             $table->timestamp('created_at');
         });
     }

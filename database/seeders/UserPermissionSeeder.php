@@ -16,8 +16,8 @@ class UserPermissionSeeder extends Seeder
         $faker = \Faker\Factory::create();
         for ($i = 0; $i < 10; $i++) {
             \App\Models\UserPermission::create([
-                'user_id' => $faker->randomDigit + 1,
-                'permission_id' => $faker->randomDigit + 1,
+                'user_id' => $i + 1,
+                'permission_id' => $faker->unique()->randomDigit + 1,
             ]);
         }
     }
