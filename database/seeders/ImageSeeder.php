@@ -16,14 +16,33 @@ class ImageSeeder extends Seeder
         $faker = \Faker\Factory::create();
         for ($i = 0; $i < 10; $i++) {
             \App\Models\Image::create([
-                'path' => $faker->imageUrl(300, 300),
-                'imageable_id' => $faker->randomDigit + 1,
-                'imageable_type' => $faker->randomElement([
-                    'user',
-                    'book',
-                    'author',
-                    'publisher',
-                ]),
+                'path' => $faker->imageUrl(256, 256),
+                'imageable_id' => $i + 1,
+                'imageable_type' => 'user',
+            ]);
+        }
+
+        for ($i = 0; $i < 10; $i++) {
+            \App\Models\Image::create([
+                'path' => $faker->imageUrl(150, 100),
+                'imageable_id' => $i + 1,
+                'imageable_type' => 'category',
+            ]);
+        }
+
+        for ($i = 0; $i < 10; $i++) {
+            \App\Models\Image::create([
+                'path' => $faker->imageUrl(150, 100),
+                'imageable_id' => $i + 1,
+                'imageable_type' => 'publisher',
+            ]);
+        }
+
+        for ($i = 0; $i < 100; $i++) {
+            \App\Models\Image::create([
+                'path' => $faker->imageUrl(1280, 2048),
+                'imageable_id' => $i + 1,
+                'imageable_type' => 'book',
             ]);
         }
     }

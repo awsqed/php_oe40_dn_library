@@ -29,8 +29,6 @@ class CreateFollowsTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('follows');
-        Schema::enableForeignKeyConstraints();
     }
 }

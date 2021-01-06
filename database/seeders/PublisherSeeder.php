@@ -16,7 +16,7 @@ class PublisherSeeder extends Seeder
         $faker = \Faker\Factory::create();
         for ($i = 0; $i < 10; $i++) {
             \App\Models\Publisher::create([
-                'name' => $faker->sentence,
+                'name' => $faker->words(2, true),
                 'description' => $faker->paragraph,
             ]);
         }

@@ -29,8 +29,6 @@ class CreateLikesTable extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('likes');
-        Schema::enableForeignKeyConstraints();
     }
 }
