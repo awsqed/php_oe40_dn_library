@@ -6,7 +6,7 @@ return [
         'en' => 'EN (English)',
         'vi' => 'VI (Vietnamese)',
     ],
-    'previous' => 'Previous',
-    'next' => 'Next',
+    'action' => 'Action',
+    'result-count' => 'Showing results :from to :to'
 
 ];

@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class User extends Authenticatable
 {
@@ -51,6 +52,24 @@ class User extends Authenticatable
     public function reviews()
     {
         return $this->belongsToMany(Book::class, 'review')->using(Review::class);
+    }
+
+    public function hasPermission($permissionNode)
+    {
+        try {
+            $permission = Permission::where('name', $permissionNode)->firstOrFail();
+            return $this->permissions()
+                        ->whereIn('name', array_merge(
+                            $permission->parentArray(),
+                            [
+                                $permissionNode,
+                            ]
+                        ))
+                        ->get()
+                        ->isNotEmpty();
+        } catch (ModelNotFoundException $e) {
+            return false;
+        }
     }
 
 }

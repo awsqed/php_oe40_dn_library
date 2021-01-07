@@ -6,7 +6,7 @@ return [
         'en' => 'EN (Tiếng Anh)',
         'vi' => 'VI (Tiếng Việt)',
     ],
-    'previous' => 'Trước',
-    'next' => 'Sau',
+    'action' => 'Hành Động',
+    'result-count' => 'Hiện thị kết quả từ :from tới :to'
 
 ];

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Dashboard\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,9 +18,17 @@ Route::get('/', function() {
     return view('home');
 })->name('home');
 
-Route::get('/dashboard', function() {
-    return view('dashboard.index');
-})->name('dashboard');
+Route::prefix('dashboard')->group(function() {
+
+    Route::get('/', function() {
+        return view('dashboard.index');
+    })->name('dashboard');
+
+    Route::resource('permissions', PermissionController::class)->only([
+        'index', 'edit', 'update'
+    ]);
+
+});
 
 Route::get('/locale/{locale?}', function($locale = 'en') {
     App::setLocale($locale);

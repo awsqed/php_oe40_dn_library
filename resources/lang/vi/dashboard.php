@@ -5,10 +5,10 @@ return [
     'admin-panel' => 'Admin Panel',
     'dashboard' => 'Bảng Điều Khiển',
     'search' => 'Tìm Kiếm',
+    'permissions' => 'Quyền Hạn',
     'sidebar' => [
         'user' => [
             'users' => 'Tài Khoản',
-            'permissions' => 'Quyền Hạn',
         ],
         'book' => [
             'books' => 'Sách',
