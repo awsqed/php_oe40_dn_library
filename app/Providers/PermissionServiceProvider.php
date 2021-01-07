@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Models\Permission;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\QueryException;
@@ -26,8 +27,11 @@ class PermissionServiceProvider extends ServiceProvider
 
             if (!is_array($configValue)) {
                 $actionName = empty($configValue) ? $value : $configValue;
+
                 Gate::define($actionName, function(User $user) use ($permissionName) {
-                    return $user->hasPermission($permissionName);
+                    return $user->hasPermission($permissionName)
+                            ? Response::allow()
+                            : Response::deny(trans('general.messages.no-permission'));
                 });
             }
         }

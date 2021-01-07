@@ -9,7 +9,7 @@ class Dashboard extends Component
 
     public $title;
 
-    public function __construct($title)
+    public function __construct($title = 'Dashboard')
     {
         $this->title = $title;
     }
@@ -18,4 +18,5 @@ class Dashboard extends Component
     {
         return view('components.dashboard');
     }
+
 }

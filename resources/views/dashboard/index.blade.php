@@ -1,5 +1,4 @@
-{{-- TODO: Permission Check --}}
-<x-dashboard title="{{ trans('dashboard.admin-panel') }}">
+<x-dashboard>
     <x-slot name="breadcrumbs">
         {{ Breadcrumbs::render('dashboard') }}
     </x-slot>

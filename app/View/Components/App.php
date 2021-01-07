@@ -18,4 +18,5 @@ class App extends Component
     {
         return view('components.app');
     }
+
 }

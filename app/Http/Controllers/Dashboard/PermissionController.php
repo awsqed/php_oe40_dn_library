@@ -4,23 +4,26 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Models\Permission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
 
 class PermissionController extends Controller
 {
 
-    public function index(Request $request)
+    public function index()
     {
-        // TODO: Authorization
+        Gate::authorize('read-permission');
 
         return view('dashboard.permissions.index', [
-            'permissions' => Permission::paginate(config('table.num-rows')),
+            'permissions' => Permission::paginate(config('app.num-rows')),
         ]);
     }
 
     public function edit(Permission $permission)
     {
-        // TODO: Authorization
+        if (Gate::none(['read-permission', 'update-permission'])) {
+            abort(403, trans('general.messages.no-permission'));
+        }
 
         return view('dashboard.permissions.edit', [
             'permission' => $permission,
@@ -30,16 +33,16 @@ class PermissionController extends Controller
 
     public function update(Request $request, Permission $permission)
     {
-        // TODO: Authorization
+        Gate::authorize('update-permission');
 
-        $validatedData = $request->validate([
+        $validated = $request->validate([
             'description' => 'nullable|max:254',
         ]);
 
-        $permission->description = $validatedData['description'];
+        $permission->description = $validated['description'];
         $permission->save();
 
-        return redirect()->back();
+        return back();
     }
 
 }

@@ -1,5 +1,4 @@
-{{-- TODO: Permission Check --}}
-<x-dashboard title="{{ trans('dashboard.admin-panel') }}">
+<x-dashboard title="{{ Breadcrumbs::current()->title }}">
     <x-slot name="breadcrumbs">
         {{ Breadcrumbs::render('permissions.index') }}
     </x-slot>
@@ -9,7 +8,9 @@
             <tr>
                 <th class="col-1" scope="col">{{ trans('permissions.id') }}</th>
                 <th scope="col">{{ trans('permissions.name') }}</th>
-                <th class="col-1" scope="col">{{ trans('general.action') }}</th>
+                @can('update-permission')
+                    <th class="col-1" scope="col">{{ trans('general.action') }}</th>
+                @endcan
             </tr>
         </x-slot>
 
@@ -18,9 +19,11 @@
                 <tr>
                     <th scope="row">{{ $permission->id }}</th>
                     <td>{{ $permission->name }}</td>
-                    <td>
-                        <x-action-buttons action="edit" route="permissions" target="{{ $permission->id }}" />
-                    </td>
+                    @can('update-permission')
+                        <td>
+                            <x-action-buttons action="edit" route="permissions" target="{{ $permission->id }}" />
+                        </td>
+                    @endcan
                 </tr>
             @endforeach
         </x-slot>

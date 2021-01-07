@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title }}</title>
+    <title>{{ $title }} - {{ config('app.name') }}</title>
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
@@ -22,29 +22,60 @@
             {{ trans('app.library') }}
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar" aria-controls="navBar" aria-expanded="false" aria-label="{{ trans('app.toggle-navigation') }}">
-        <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse justify-content-end" id="navBar">
             <ul class="navbar-nav">
-                <li class="nav-item {{ Request::routeIs('home') ? 'active bg-light' : '' }}">
-                    <a class="nav-link" href="#">{{ trans('app.home') }}</a>
+                <li class="nav-item mr-2 {{ Request::routeIs('home') ? 'active bg-light' : '' }}">
+                    <a class="nav-link" href="{{ route('home') }}">{{ trans('app.home') }}</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item mr-2">
                     <a class="nav-link" href="#">{{ trans('app.books') }}</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">{{ trans('app.about-us') }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">{{ trans('app.contact-us') }}</a>
-                </li>
+                @guest
+                    <li class="nav-item mr-2 dropdown {{ Request::routeIs('login', 'register') ? 'active bg-light' : '' }}">
+                        <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                            {{ trans('app.guest') }}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item {{ Request::routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">
+                                {{ trans('auth.login') }}
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item {{ Request::routeIs('register') ? 'active' : '' }}" href="{{ route('register') }}">
+                                {{ trans('auth.register') }}
+                            </a>
+                        </div>
+                    </li>
+                @else
+                    <li class="nav-item dropdown mr-2">
+                        <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                            {{ Auth::user()->fullname ?: Auth::user()->username }}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="{{ route('dashboard') }}">
+                                {{ trans('dashboard.dashboard') }}
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <form class="dropdown-item" action="{{ route('logout') }}" method="POST">
+                                @csrf
+
+                                <button class="btn btn-link text-danger p-0" type="submit">
+                                    {{ trans('dashboard.logout') }}
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                @endguest
+
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-uppercase" href="#" id="navbarLocale" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a href="" class="nav-link dropdown-toggle text-uppercase" data-toggle="dropdown">
                         {{ App::getLocale() }}
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarLocale">
+                    <div class="dropdown-menu dropdown-menu-right">
                         <a class="dropdown-item" href="{{ url('/locale/en') }}">{{ trans('general.locale.en') }}</a>
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ url('/locale/vi') }}">{{ trans('general.locale.vi') }}</a>
                     </div>
                 </li>

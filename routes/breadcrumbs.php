@@ -34,7 +34,7 @@ Breadcrumbs::macro('resource', function ($parent, $name, $title, $only = [
         // Home > Model > {model} > Edit
         Breadcrumbs::for("{$name}.edit", function ($trail, $model) use ($name) {
             $parentCrumb = "{$name}.index";
-            $crumbTitle = $model->breadcrumb();
+            $crumbTitle = $model->breadcrumb;
 
             if (Breadcrumbs::exists("{$name}.show")) {
                 $parentCrumb = "{$name}.show";

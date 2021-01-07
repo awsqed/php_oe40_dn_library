@@ -1,7 +1,12 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="{{ route('dashboard') }}" class="brand-link text-center text-uppercase">
-        {{-- TODO: Permission Check --}}
-        <span class="brand-text font-weight-bold">{{ trans('dashboard.admin-panel') }}</span>
+        <span class="brand-text font-weight-bold">
+            @if (Auth::user()->hasPermission('admin'))
+                {{ trans('dashboard.admin-panel') }}
+            @else
+                {{ trans('dashboard.user-panel') }}
+            @endif
+        </span>
     </a>
 
     <div class="sidebar">

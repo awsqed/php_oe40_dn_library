@@ -6,7 +6,6 @@ return [
     'library' => 'Thư Viện',
     'toggle-navigation' => 'Toggle Navigation',
     'books' => 'Sách',
-    'about-us' => 'Giới Thiệu',
-    'contact-us' => 'Liên Hệ',
+    'guest' => 'Khách',
 
 ];

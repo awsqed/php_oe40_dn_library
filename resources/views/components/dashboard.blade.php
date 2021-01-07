@@ -8,7 +8,9 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title }}</title>
+    <title>
+        {{ $title }} - {{ trans('dashboard.'. (Auth::user()->hasPermission('admin') ? 'admin' : 'user') .'-panel') }}
+    </title>
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
@@ -18,7 +20,7 @@
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
-        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <nav class="main-header navbar sticky-top navbar-expand navbar-white navbar-light">
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
@@ -26,43 +28,51 @@
             </ul>
 
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown user-menu">
-                    <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                        {{-- TODO: Image URL --}}
-                        <img src="https://i.picsum.photos/id/866/300/300.jpg?hmac=9qmLpcaT9TgKd6PD37aZJZ_7QvgrVFMcvI3JQKWVUIQ"
-                             class="user-image img-circle elevation-2" />
-                        <span class="d-none d-md-inline">{{-- TODO: Username --}}</span>
+                <li class="nav-item dropdown user-menu mr-1">
+                    <a href="" class="nav-link dropdown-toggle d-inline-flex align-items-center" data-toggle="dropdown">
+                        <img src="{{ Auth::user()->avatar() }}" class="rounded-circle elevation-2" width="32">
+                        <span class="d-inline pl-2">{{ Auth::user()->fullname ?: Auth::user()->username }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         <li class="user-header bg-primary">
-                            {{-- TODO: Image URL --}}
-                            <img src="https://i.picsum.photos/id/866/300/300.jpg?hmac=9qmLpcaT9TgKd6PD37aZJZ_7QvgrVFMcvI3JQKWVUIQ"
-                                 class="img-circle elevation-2" />
+                            <img src="{{ Auth::user()->avatar() }}" class="rounded-circle elevation-2">
                             <p>
-                                {{-- TODO: Username --}}
-                                <small>{{-- TODO: created_at --}}</small>
+                                {{ Auth::user()->fullname }}
+                                <small>
+                                    {{ trans('dashboard.member-since', ['year' => Auth::user()->created_at->format('Y')]) }}
+                                </small>
                             </p>
                         </li>
 
-                        <li class="user-footer">
-                            {{-- TODO: Logout Button --}}
+                        <li class="user-footer w-100 d-inline-flex justify-content-center align-items-center">
+                            <a class="btn btn-outline-primary mx-1" href="{{ route('home') }}">
+                                <i class="fas fa-home"></i>
+                            </a>
+                            <form class="mx-1" action="{{ route('logout') }}" method="POST">
+                                @csrf
+
+                                <button class="btn btn-danger" type="submit">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
+                            </form>
                         </li>
                     </ul>
                 </li>
 
                 <li class="nav-item dropdown">
-                    <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                        <span class="d-none d-md-inline text-uppercase">{{ App::getLocale() }}</span>
+                    <a href="" class="nav-link dropdown-toggle text-uppercase" data-toggle="dropdown">
+                        {{ App::getLocale() }}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
                         <a class="dropdown-item" href="{{ url('/locale/en') }}">{{ trans('general.locale.en') }}</a>
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ url('/locale/vi') }}">{{ trans('general.locale.vi') }}</a>
                     </div>
                 </li>
             </ul>
         </nav>
 
-        @include('layouts.sidebar')
+        @include('layouts.dashboard.sidebar')
 
         <div class="content-wrapper">
             {{ $breadcrumbs }}
