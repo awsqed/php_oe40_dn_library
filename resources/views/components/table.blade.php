@@ -9,4 +9,4 @@
     </table>
 </div>
 {{ $pagination }}
-<div class="clear-fix"></div>
+<div class="clearfix"></div>

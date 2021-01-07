@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -20,6 +22,22 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected static function booted()
+    {
+        // Delete all related records before deleting the user
+        static::deleting(function($user) {
+            DB::transaction(function() use ($user) {
+                $user->image()->delete();
+                $user->permissions()->detach();
+                $user->bookBorrowRequests()->detach();
+                $user->likes()->forceDelete();
+                $user->followings()->forceDelete();
+                $user->followers()->forceDelete();
+                $user->reviews()->detach();
+            });
+        });
+    }
+
     public function image()
     {
         return $this->morphOne(Image::class, 'imageable');
@@ -27,8 +45,9 @@ class User extends Authenticatable
 
     public function avatar()
     {
-        return $this->image->path
-                ?? "https://ui-avatars.com/api/?name={$this->username}?size=256?background=random";
+        return !empty($this->image->path)
+                ? $this->image->path
+                : "https://ui-avatars.com/api/?name={$this->fullname}?size=256?background=random";
     }
 
     public function permissions()
@@ -93,7 +112,17 @@ class User extends Authenticatable
 
     public function reviews()
     {
-        return $this->belongsToMany(Book::class, 'review')->using(Review::class);
+        return $this->belongsToMany(Book::class, 'reviews')->using(Review::class);
+    }
+
+    public function getFullnameAttribute()
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function getBreadcrumbAttribute()
+    {
+        return $this->username;
     }
 
 }

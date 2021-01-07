@@ -12,7 +12,7 @@
     <div class="sidebar">
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu">
-                @include('layouts.menu')
+                @include('layouts.dashboard.menu')
             </ul>
         </nav>
     </div>

@@ -9,18 +9,18 @@
     'read-user',
     'read-permission',
 ])
-    <li class="nav-item has-treeview {{ Request::routeIs('permissions.index') ? 'menu-open' : '' }}">
+    <li class="nav-item has-treeview {{ Request::routeIs('users.*', 'permissions.*') ? 'menu-open' : '' }}">
         <a href="#" class="nav-link">
             <i class="nav-icon fas fa-users"></i>
             <p>
-                {{ trans('dashboard.sidebar.user.users') }}
+                {{ trans('dashboard.users') }}
                 <i class="right fas fa-angle-left"></i>
             </p>
         </a>
         <ul class="nav nav-treeview">
             @can('read-user')
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('users.index') }}" class="nav-link {{ Request::routeIs('users.*') ? 'active' : '' }}">
                         <i class="fas fa-search nav-icon"></i>
                         <p>{{ trans('dashboard.search') }}</p>
                     </a>
@@ -29,7 +29,7 @@
 
             @can('read-permission')
                 <li class="nav-item">
-                    <a href="{{ route('permissions.index') }}" class="nav-link {{ Request::routeIs('permissions.index') ? 'active' : '' }}">
+                    <a href="{{ route('permissions.index') }}" class="nav-link {{ Request::routeIs('permissions.*') ? 'active' : '' }}">
                         <i class="fas fa-unlock-alt nav-icon"></i>
                         <p>{{ trans('dashboard.permissions') }}</p>
                     </a>
