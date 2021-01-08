@@ -131,8 +131,9 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'image' => [
+            'image' => 'File must be an image.',
+            'dimensions' => 'Image\'s ratio must be 1.',
         ],
     ],
 

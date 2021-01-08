@@ -2,7 +2,13 @@
 
 return [
 
-    'new' => 'Tạo Mới',
+    'messages' => [
+        'input-username-help' => 'Đây sẽ là mật khẩu mặc định cho tài khoản này',
+        'user-created' => 'Tạo tài khoản mới thành công.',
+        'user-edited' => 'Chỉnh sửa tài khoản thành công.',
+    ],
+    'new' => 'Tạo Tài Khoản',
+    'editing' => 'Chỉnh Sửa',
     'id' => 'ID',
     'username' => 'Tên Tài khoản',
     'email' => 'Email',
@@ -14,5 +20,8 @@ return [
     'birthday' => 'Ngày SInh',
     'phone' => 'Số Điện Thoại',
     'address' => 'Địa Chỉ',
+    'male' => ' Nam',
+    'female' => 'Nữ',
+    'assign-permissions' => 'Quyền Hạn',
 
 ];
