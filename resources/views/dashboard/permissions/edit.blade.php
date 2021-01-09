@@ -1,4 +1,4 @@
-<x-dashboard title="{{ trans('permissions.editing') }}: {{ $permission->name }}">
+<x-dashboard :title="trans('permissions.editing') .': '. $permission->name">
     <x-slot name="breadcrumbs">
         {{ Breadcrumbs::render('permissions.edit', $permission) }}
     </x-slot>
@@ -9,6 +9,7 @@
             <strong>{{ trans('permissions.editing') }}:</strong>
             <i class="user-select-all">{{ $permission->name }}</i>
         </h5>
+
         <div class="card-body">
             <div class="col-4 float-left">
                 <form action="{{ route('permissions.update', $permission->id) }}" method="POST">
@@ -44,11 +45,12 @@
                 </form>
             </div>
 
-            @if (count($childs) > 0)
+            @if (count($childs))
                 <div class="card col-3 float-right h-50">
                     <h6 class="card-header font-weight-bold">
                         {{ trans('permissions.childrens') }} ({{ count($childs) }})
                     </h6>
+
                     <ul class="list-group list-group-flush scrollable-150">
                         @foreach ($childs as $child)
                             <li class="list-group-item user-select-all">
@@ -59,7 +61,7 @@
                 </div>
             @endif
 
-            <div class="clear-fix"></div>
+            <div class="clearfix"></div>
         </div>
     </div>
 

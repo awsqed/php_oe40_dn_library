@@ -1,4 +1,4 @@
-<x-app title="{{ trans('app.home') }}">
+<x-app>
     <div class="col-9 mx-auto my-5">
         <div class="mb-3 d-flex">
             <h2 class="col-2 text-break">{{ trans('home.random-books') }}</h2>

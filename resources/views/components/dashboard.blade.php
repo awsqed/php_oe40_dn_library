@@ -1,3 +1,11 @@
+@props([
+    'title' => trans('dashboard.dashboard'),
+])
+
+@php
+    $currentUser = Auth::user();
+@endphp
+
 <!DOCTYPE html>
 <html lang="{{ App::getLocale() }}">
 <head>
@@ -9,7 +17,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>
-        {{ $title }} - {{ trans('dashboard.'. (Auth::user()->hasPermission('admin') ? 'admin' : 'user') .'-panel') }}
+        {{ $title }} - {{ trans('dashboard.'. ($currentUser->hasPermission('admin') ? 'admin' : 'user') .'-panel') }}
     </title>
 
     <!-- Styles -->
@@ -29,17 +37,24 @@
 
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item dropdown user-menu mr-1">
-                    <a href="" class="nav-link dropdown-toggle d-inline-flex align-items-center" data-toggle="dropdown">
-                        <img src="{{ Auth::user()->avatar() }}" class="rounded-circle elevation-2" width="32">
-                        <span class="d-inline pl-2">{{ Auth::user()->fullname ?: Auth::user()->username }}</span>
+                    <a href="" class="nav-link dropdown d-inline-flex align-items-center" data-toggle="dropdown">
+                        <img src="{{ $currentUser->avatar() }}" class="rounded-circle elevation-2" width="32">
+                        <span class="d-inline mx-2">
+                            {{ trim($currentUser->fullname) ?: $currentUser->username }}
+                        </span>
+                        <i class="fas fa-angle-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         <li class="user-header bg-primary">
-                            <img src="{{ Auth::user()->avatar() }}" class="rounded-circle elevation-2">
+                            <img src="{{ $currentUser->avatar() }}" class="rounded-circle elevation-2">
                             <p>
-                                {{ Auth::user()->fullname }}
+                                {{ trim($currentUser->fullname) ?: $currentUser->username }}
                                 <small>
-                                    {{ trans('dashboard.member-since', ['year' => Auth::user()->created_at->format('Y')]) }}
+                                    {{
+                                        trans('dashboard.member-since', [
+                                            'year' => $currentUser->created_at->format('Y'),
+                                        ])
+                                    }}
                                 </small>
                             </p>
                         </li>
@@ -59,20 +74,29 @@
                     </ul>
                 </li>
 
-                <li class="nav-item dropdown">
-                    <a href="" class="nav-link dropdown-toggle text-uppercase" data-toggle="dropdown">
-                        {{ App::getLocale() }}
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="{{ url('/locale/en') }}">{{ trans('general.locale.en') }}</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ url('/locale/vi') }}">{{ trans('general.locale.vi') }}</a>
-                    </div>
-                </li>
+                <x-localization/>
             </ul>
         </nav>
 
-        @include('layouts.dashboard.sidebar')
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="{{ route('dashboard') }}" class="brand-link text-center text-uppercase">
+                <span class="brand-text font-weight-bold">
+                    @if ($currentUser->hasPermission('admin'))
+                        {{ trans('dashboard.admin-panel') }}
+                    @else
+                        {{ trans('dashboard.user-panel') }}
+                    @endif
+                </span>
+            </a>
+
+            <div class="sidebar">
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu">
+                        @include('layouts.dashboard.menu')
+                    </ul>
+                </nav>
+            </div>
+        </aside>
 
         <div class="content-wrapper">
             {{ $breadcrumbs }}
@@ -81,16 +105,7 @@
             </section>
         </div>
 
-        <footer class="main-footer">
-            {{-- TODO: Footer --}}
-            <!--
-            <div class="float-right d-none d-sm-block">
-                <b>Version</b> 3.0.5
-            </div>
-            <strong>Copyright &copy; 2014-2020 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights
-            reserved.
-            -->
-        </footer>
+        <footer class="main-footer"><strong>&copy; 2020</strong></footer>
     </div>
 
     <!-- Scripts -->

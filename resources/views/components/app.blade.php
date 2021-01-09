@@ -1,3 +1,11 @@
+@props([
+    'title' => trans('app.home'),
+])
+
+@php
+    $currentUser = Auth::user();
+@endphp
+
 <!DOCTYPE html>
 <html lang="{{ App::getLocale() }}">
 <head>
@@ -21,6 +29,7 @@
         <a class="navbar-brand text-uppercase font-weight-bold" href="{{ route('home') }}">
             {{ trans('app.library') }}
         </a>
+
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBar" aria-controls="navBar" aria-expanded="false" aria-label="{{ trans('app.toggle-navigation') }}">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -30,13 +39,16 @@
                 <li class="nav-item mr-2 {{ Request::routeIs('home') ? 'active bg-light' : '' }}">
                     <a class="nav-link" href="{{ route('home') }}">{{ trans('app.home') }}</a>
                 </li>
+
                 <li class="nav-item mr-2">
                     <a class="nav-link" href="#">{{ trans('app.books') }}</a>
                 </li>
+
                 @guest
                     <li class="nav-item mr-2 dropdown {{ Request::routeIs('login', 'register') ? 'active bg-light' : '' }}">
-                        <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                        <a href="" class="nav-link dropdown" data-toggle="dropdown">
                             {{ trans('app.guest') }}
+                            <i class="fas fa-angle-down ml-2"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item {{ Request::routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">
@@ -50,8 +62,9 @@
                     </li>
                 @else
                     <li class="nav-item dropdown mr-2">
-                        <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                            {{ Auth::user()->fullname ?: Auth::user()->username }}
+                        <a href="" class="nav-link dropdown" data-toggle="dropdown">
+                            {{ trim($currentUser->fullname) ?: $currentUser->username }}
+                            <i class="fas fa-angle-down ml-2"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="{{ route('dashboard') }}">
@@ -69,16 +82,7 @@
                     </li>
                 @endguest
 
-                <li class="nav-item dropdown">
-                    <a href="" class="nav-link dropdown-toggle text-uppercase" data-toggle="dropdown">
-                        {{ App::getLocale() }}
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="{{ url('/locale/en') }}">{{ trans('general.locale.en') }}</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ url('/locale/vi') }}">{{ trans('general.locale.vi') }}</a>
-                    </div>
-                </li>
+                <x-localization/>
             </ul>
         </div>
     </nav>

@@ -3,10 +3,11 @@
         <thead class="thead-dark">
             {{ $thead }}
         </thead>
+
         <tbody>
             {{ $tbody }}
         </tbody>
     </table>
+
+    {{ $slot }}
 </div>
-{{ $pagination }}
-<div class="clearfix"></div>
