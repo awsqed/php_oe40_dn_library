@@ -45,7 +45,7 @@
     'read-publisher',
     'read-books',
 ])
-    <li class="nav-item has-treeview">
+    <li class="nav-item has-treeview {{ Request::routeIs('books.*', 'categories.*', 'authors.*', 'publishers.*') ? 'menu-open' : '' }}">
         <a href="#" class="nav-link">
             <i class="nav-icon fas fa-book"></i>
             <p>
@@ -65,9 +65,9 @@
 
             @can('read-category')
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('categories.index') }}" class="nav-link {{ Request::routeIs('categories.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-folder"></i>
-                        <p>{{ trans('dashboard.sidebar.book.categories') }}</p>
+                        <p>{{ trans('dashboard.categories') }}</p>
                     </a>
                 </li>
             @endcan

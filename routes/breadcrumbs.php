@@ -52,7 +52,14 @@ Breadcrumbs::resource('dashboard', 'permissions', trans('dashboard.permissions')
     'edit',
 ]);
 
+
 Breadcrumbs::resource('dashboard', 'users', trans('dashboard.users'), [
+    'index',
+    'create',
+    'edit',
+]);
+
+Breadcrumbs::resource('dashboard', 'categories', trans('dashboard.categories'), [
     'index',
     'create',
     'edit',

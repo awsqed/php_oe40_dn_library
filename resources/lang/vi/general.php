@@ -5,6 +5,7 @@ return [
     'messages' => [
         'no-permission' => 'Quyền hạn không đủ',
         'delete-user-self' => 'Không thể xoá tài khoản đang sử dụng',
+        'delete-fallback-category' => 'Không thể xoá thể loại này',
     ],
     'locale' => [
         'en' => 'EN (Tiếng Anh)',

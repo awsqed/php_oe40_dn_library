@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Dashboard\UserController;
+use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\PermissionController;
 
 Route::get('/', function () {
@@ -21,6 +22,10 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
     ]);
 
     Route::resource('users', UserController::class)->except([
+        'show',
+    ]);
+
+    Route::resource('categories', CategoryController::class)->except([
         'show',
     ]);
 
