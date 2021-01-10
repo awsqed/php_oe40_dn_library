@@ -70,3 +70,9 @@ Breadcrumbs::resource('dashboard', 'authors', trans('dashboard.authors'), [
     'create',
     'edit',
 ]);
+
+Breadcrumbs::resource('dashboard', 'publishers', trans('dashboard.publishers'), [
+    'index',
+    'create',
+    'edit',
+]);

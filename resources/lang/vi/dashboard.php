@@ -10,14 +10,10 @@ return [
     'search' => 'Tìm Kiếm',
     'permissions' => 'Quyền Hạn',
     'users' => 'Tài Khoản',
+    'books' => 'Sách',
     'categories' => 'Thể Loại',
     'authors' => 'Tác Giả',
-    'sidebar' => [
-        'book' => [
-            'books' => 'Sách',
-            'publishers' => 'Nhà Xuất Bản',
-            'borrow-requests' => 'Yêu Cầu Mượn Sách',
-        ],
-    ],
+    'publishers' => 'Nhà Xuất Bản',
+    'borrow-requests' => 'Yêu Cầu Mượn Sách',
 
 ];
