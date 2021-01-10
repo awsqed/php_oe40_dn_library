@@ -74,9 +74,9 @@
 
             @can('read-author')
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                     <a href="{{ route('authors.index') }}" class="nav-link {{ Request::routeIs('authors.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-book-reader"></i>
-                        <p>{{ trans('dashboard.sidebar.book.authors') }}</p>
+                        <p>{{ trans('dashboard.authors') }}</p>
                     </a>
                 </li>
             @endcan

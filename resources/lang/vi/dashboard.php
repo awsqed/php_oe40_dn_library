@@ -11,10 +11,10 @@ return [
     'permissions' => 'Quyền Hạn',
     'users' => 'Tài Khoản',
     'categories' => 'Thể Loại',
+    'authors' => 'Tác Giả',
     'sidebar' => [
         'book' => [
             'books' => 'Sách',
-            'authors' => 'Tác Giả',
             'publishers' => 'Nhà Xuất Bản',
             'borrow-requests' => 'Yêu Cầu Mượn Sách',
         ],

@@ -11,10 +11,10 @@ return [
     'permissions' => 'Permissions',
     'users' => 'Users',
     'categories' => 'Categories',
+    'authors' => 'Authors',
     'sidebar' => [
         'book' => [
             'books' => 'Books',
-            'authors' => 'Authors',
             'publishers' => 'Publishers',
             'borrow-requests' => 'Borrow Requests',
         ],
