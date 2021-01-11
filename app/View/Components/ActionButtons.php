@@ -22,4 +22,5 @@ class ActionButtons extends Component
     {
         return view('components.action-buttons');
     }
+
 }

@@ -76,7 +76,7 @@ class Permission extends Model
         return $result;
     }
 
-    public function breadcrumb()
+    public function getBreadcrumbAttribute()
     {
         return $this->name;
     }

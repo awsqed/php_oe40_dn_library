@@ -1,5 +1,4 @@
-{{-- TODO: Permission Check --}}
-<x-dashboard title="{{ trans('dashboard.admin-panel') }}">
+<x-dashboard title="{{ trans('permissions.editing') }}: {{ $permission->name }}">
     <x-slot name="breadcrumbs">
         {{ Breadcrumbs::render('permissions.edit', $permission) }}
     </x-slot>
@@ -38,9 +37,8 @@
                     </div>
 
                     <div class="row g-2">
-                        <div class="col-3"></div>
-                        <div class="col-9">
-                            <button class="btn btn-primary" type="submit">{{ trans('permissions.save') }}</button>
+                        <div class="col-9 offset-3">
+                            <button class="btn btn-primary" type="submit">{{ trans('general.save') }}</button>
                         </div>
                     </div>
                 </form>

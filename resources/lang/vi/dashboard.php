@@ -3,13 +3,14 @@
 return [
 
     'admin-panel' => 'Admin Panel',
+    'user-panel' => 'User Panel',
     'dashboard' => 'Bảng Điều Khiển',
+    'member-since' => 'Thành viên từ năm :year',
+    'logout' => 'Đăng Xuất',
     'search' => 'Tìm Kiếm',
     'permissions' => 'Quyền Hạn',
+    'users' => 'Tài Khoản',
     'sidebar' => [
-        'user' => [
-            'users' => 'Tài Khoản',
-        ],
         'book' => [
             'books' => 'Sách',
             'categories' => 'Thể Loại',

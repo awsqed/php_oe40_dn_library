@@ -18,14 +18,16 @@ Route::get('/', function() {
     return view('home');
 })->name('home');
 
-Route::prefix('dashboard')->group(function() {
+Route::prefix('dashboard')->middleware('auth')->group(function() {
 
     Route::get('/', function() {
         return view('dashboard.index');
     })->name('dashboard');
 
     Route::resource('permissions', PermissionController::class)->only([
-        'index', 'edit', 'update'
+        'index',
+        'edit',
+        'update',
     ]);
 
 });
@@ -34,5 +36,9 @@ Route::get('/locale/{locale?}', function($locale = 'en') {
     App::setLocale($locale);
     Session::put('locale', $locale);
 
-    return redirect()->back();
+    return back();
 });
+
+Auth::routes([
+    'reset' => false,
+]);
