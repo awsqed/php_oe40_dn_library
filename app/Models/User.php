@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Notifications\Notifiable;
@@ -45,9 +44,14 @@ class User extends Authenticatable
 
     public function avatar()
     {
-        return !empty($this->image->path)
-                ? $this->image->path
-                : "https://ui-avatars.com/api/?name={$this->fullname}?size=256?background=random";
+        $model = $this;
+        return Cache::remember("{$model->id}-avatar", config('app.cache-time'), function () use ($model) {
+            $image = $model->image;
+            $imagePath = $image == null ? '' : $image->path;
+            return !empty($imagePath)
+                    ? asset("storage/{$imagePath}")
+                    : asset('storage/'. config('app.default-image.user'));
+        });
     }
 
     public function permissions()
@@ -55,7 +59,7 @@ class User extends Authenticatable
         return $this->belongsToMany(Permission::class, 'user_permissions')->using(UserPermission::class);
     }
 
-    public function hasPermission($permission)
+    public function hasPermission($permission, $recursive = true)
     {
         $cacheTime = config('app.cache-time');
         $model = Cache::remember("{$permission}", $cacheTime, function () use ($permission) {
@@ -71,7 +75,11 @@ class User extends Authenticatable
         }
 
         $userPermissions = $this->permissions();
-        $cacheKey = $this->username ."-{$permission}";
+        if (!$recursive) {
+            return $userPermissions->where('name', $permission)->get()->isNotEmpty();
+        }
+
+        $cacheKey = $this->id ."-{$permission}";
         $hasPermission = Cache::remember($cacheKey, $cacheTime, function () use ($userPermissions, $model, $permission) {
             return $userPermissions
                     ->whereIn(

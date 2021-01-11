@@ -115,7 +115,7 @@ return [
     'string' => 'The :attribute must be a string.',
     'timezone' => 'The :attribute must be a valid zone.',
     'unique' => 'The :attribute has already been taken.',
-    'uploaded' => 'The :attribute failed to upload.',
+    'uploaded' => 'Tải tệp lên thất bại.',
     'url' => 'The :attribute format is invalid.',
     'uuid' => 'The :attribute must be a valid UUID.',
 
@@ -131,8 +131,9 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'image' => [
+            'image' => 'Chỉ được dùng tệp ảnh.',
+            'dimensions' => 'Tỉ lệ ảnh phải là 1:1.',
         ],
     ],
 

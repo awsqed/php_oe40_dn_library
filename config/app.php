@@ -131,6 +131,30 @@ return [
 
     'num-rows' => 10,
     'cache-time' => 60,
+    'default-image' => [
+        'user' => 'images/users/user.png',
+        'category' => 'images/categories/category.png',
+        'publisher' => 'images/publishers/publisher.png',
+        'book' => 'images/books/book.png',
+    ],
+    'image-size' => [
+        'user' => [
+            'width' => 256,
+            'height' => 256,
+        ],
+        'category' => [
+            'width' => 150,
+            'height' => 100,
+        ],
+        'publisher' => [
+            'width' => 150,
+            'height' => 100,
+        ],
+        'book' => [
+            'width' => 320,
+            'height' => 512,
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
