@@ -10,11 +10,9 @@ return [
         'en' => 'EN (English)',
         'vi' => 'VI (Vietnamese)',
     ],
-    'username' => 'Username',
-    'email' => 'Email Address',
-    'password' => 'Password',
     'confirm-password' => 'Confirm Password',
     'action' => 'Action',
     'result-count' => 'Showing results :from to :to',
+    'save' => 'Save',
 
 ];

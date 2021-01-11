@@ -7,7 +7,6 @@ return [
     'editing' => 'Editing',
     'description' => 'Description',
     'input-desc-placeholder' => 'A short sentence describing the permission',
-    'save' => 'Save',
     'childrens' => 'Childrens',
 
 ];

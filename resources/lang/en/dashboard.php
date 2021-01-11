@@ -9,10 +9,8 @@ return [
     'logout' => 'Logout',
     'search' => 'Search',
     'permissions' => 'Permissions',
+    'users' => 'Users',
     'sidebar' => [
-        'user' => [
-            'users' => 'Users',
-        ],
         'book' => [
             'books' => 'Books',
             'categories' => 'Categories',
