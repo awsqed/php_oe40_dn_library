@@ -51,14 +51,14 @@
                     <div class="card p-0">
                         <div class="row no-gutters">
                             <div class="col-4">
-                                <a href="">
+                                <a href="{{ route('library.book', $book) }}">
                                     <img src="{{ $book->cover }}" class="card-img-top">
                                 </a>
                             </div>
                             <div class="col-8">
                                 <div class="card-body">
                                     <h5 class="card-title mb-2">
-                                        <a href="" class="h4 font-weight-bold text-reset text-decoration-none">
+                                        <a href="{{ route('library.book', $book) }}" class="h4 font-weight-bold text-reset text-decoration-none">
                                             {{ Str::title($book->title) }}
                                         </a>
                                         <br />

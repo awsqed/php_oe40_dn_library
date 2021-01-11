@@ -37,4 +37,11 @@ class LibraryController extends Controller
         ]);
     }
 
+    public function viewBook(Book $book)
+    {
+        return view('home.library.book', [
+            'book' => $book,
+        ]);
+    }
+
 }

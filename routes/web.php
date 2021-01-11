@@ -11,7 +11,13 @@ use App\Http\Controllers\Home\LibraryController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/books', [LibraryController::class, 'index'])->name('library.index');
+Route::name('library.')->group(function () {
+
+    Route::get('/books', [LibraryController::class, 'index'])->name('index');
+
+    Route::get('/book/{book}', [LibraryController::class, 'viewBook'])->name('book');
+
+});
 
 Route::prefix('dashboard')->middleware('auth')->group(function () {
 
