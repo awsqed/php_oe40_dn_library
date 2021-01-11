@@ -21,11 +21,17 @@ class PermissionServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadPermissions(config('permissions'));
-        foreach (Permission::all() as $value) {
+
+        $permissions = [];
+        try {
+            $permissions = Permission::all();
+        } catch (QueryException $e) {}
+
+        foreach ($permissions as $value) {
             $permissionName = $value->name;
             $configValue = config("permissions.{$permissionName}");
 
-            if (!is_array($configValue)) {
+            if (isset($configValue) && !is_array($configValue)) {
                 $actionName = empty($configValue) ? $value : $configValue;
 
                 Gate::define($actionName, function(User $user) use ($permissionName) {

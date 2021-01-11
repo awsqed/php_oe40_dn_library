@@ -15,5 +15,8 @@ return [
     'action' => 'Action',
     'result-count' => 'Showing results :from to :to',
     'save' => 'Save',
+    'search' => 'Search',
+    'no-result' => 'No Result',
+    'cancel' => 'Cancel',
 
 ];

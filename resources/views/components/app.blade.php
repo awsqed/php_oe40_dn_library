@@ -40,8 +40,8 @@
                     <a class="nav-link" href="{{ route('home') }}">{{ trans('app.home') }}</a>
                 </li>
 
-                <li class="nav-item mr-2">
-                    <a class="nav-link" href="#">{{ trans('app.books') }}</a>
+                <li class="nav-item mr-2 {{ Request::routeIs('library.index') ? 'active bg-light' : '' }}">
+                    <a class="nav-link" href="{{ route('library.index') }}">{{ trans('app.books') }}</a>
                 </li>
 
                 @guest
