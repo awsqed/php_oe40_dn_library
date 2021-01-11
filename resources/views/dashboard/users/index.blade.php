@@ -1,4 +1,4 @@
-<x-dashboard title="{{ Breadcrumbs::current()->title }}">
+<x-dashboard :title="Breadcrumbs::current()->title">
     <x-slot name="breadcrumbs">
         {{ Breadcrumbs::render('users.index') }}
     </x-slot>
@@ -41,24 +41,12 @@
                         'update-user-info',
                         'delete-user',
                     ])
-                        <td>
-                            <x-action-buttons action="edit,destroy" route="users" target="{{ $user->id }}" />
-                        </td>
+                        <td><x-action-buttons action="edit,destroy" route="users" :target="$user->id" /></td>
                     @endcan
                 </tr>
             @endforeach
         </x-slot>
 
-        <x-slot name="pagination">
-            <div class="float-left">
-                {{ trans('general.result-count', [
-                    'from' => $users->firstItem(),
-                    'to' => $users->firstItem() + $users->count() - 1,
-                ]) }}
-            </div>
-            <div class="float-right">
-                {{ $users->links('vendor.pagination.bootstrap-4') }}
-            </div>
-        </x-slot>
+        <x-pagination :data="$users"/>
     </x-table>
 </x-dashboard>

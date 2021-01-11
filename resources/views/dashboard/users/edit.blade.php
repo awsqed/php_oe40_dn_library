@@ -1,4 +1,4 @@
-<x-dashboard title="{{ Breadcrumbs::current()->title }}">
+<x-dashboard :title="trans('permissions.editing') .': '. $user->username">
     <x-slot name="breadcrumbs">
         {{ Breadcrumbs::render('users.edit', $user) }}
     </x-slot>
@@ -8,9 +8,13 @@
         @method('PUT')
 
         <div class="form-group col-2 mr-3">
-            <img id="imageHolder" class="img-thumbnail" src="{{ $user->avatar() }}" width="{{ config('app.image-size.user.width') }}" height="{{ config('app.image-size.user.width') }}">
+            @php
+                $imgW = config('app.image-size.user.width');
+                $imgH = config('app.image-size.user.height');
+            @endphp
+            <img id="imageHolder" class="img-thumbnail" src="{{ $user->avatar() }}" width="{{ $imgW }}" height="{{ $imgH }}">
             <div class="custom-file my-3">
-                <input id="input-image" name="image" type="file" class="custom-file-input @error('image') is-invalid @enderror">
+                <input id="input-image" name="image" type="file" class="custom-file-input @error('image') is-invalid @enderror" accept="image/*">
                 <label class="custom-file-label" for="input-image"></label>
             </div>
             @error('image')
@@ -24,9 +28,10 @@
                     {{ session('success') }}
                 </div>
             @endif
+
             <div class="card flex-fill shadow p-3 mb-5 bg-white rounded">
                 <h5 class="card-header">
-                    <i class="fas fa-user-edit fa-fw mr-1"></i>
+                    <i class="fas fa-user-edit mr-1"></i>
                     <strong>{{ trans('users.editing') }}:</strong>
                     <i class="user-select-all">{{ $user->username }}</i>
                 </h5>
@@ -35,7 +40,7 @@
                     <div class="form-row">
                         <div class="form-group col-12">
                             <label for="input-username">{{ trans('users.username') }}</label>
-                            <input type="text" class="form-control @error('username') is-invalid @enderror" id="input-username" name="username" value="{{ old('username') ?: $user->username }}">
+                            <input type="text" class="form-control @error('username') is-invalid @enderror" id="input-username" name="username" value="{{ old('username') ?: $user->username }}" minlength="8" maxlength="254">
                             @error('username')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -45,7 +50,7 @@
                     <div class="form-row">
                         <div class="form-group col-6">
                             <label for="input-email">{{ trans('users.email') }}</label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="input-email" name="email" value="{{ old('email') ?: $user->email }}">
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="input-email" name="email" value="{{ old('email') ?: $user->email }}" maxlength="254">
                             @error('email')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -53,7 +58,7 @@
 
                         <div class="form-group col-6">
                             <label for="input-password">{{ trans('users.password') }}</label>
-                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="input-password" name="password">
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="input-password" name="password" minlength="8">
                             @error('password')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -63,7 +68,7 @@
                     <div class="form-row">
                         <div class="form-group col-6">
                             <label for="input-fname">{{ trans('users.first-name') }}</label>
-                            <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="input-fname" name="first_name" value="{{ old('first_name') ?: $user->first_name }}">
+                            <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="input-fname" name="first_name" value="{{ old('first_name') ?: $user->first_name }}" maxlength="254">
                             @error('first_name')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -71,7 +76,7 @@
 
                         <div class="form-group col-6">
                             <label for="input-lname">{{ trans('users.last-name') }}</label>
-                            <input type="text" class="form-control @error('last_name') is-invalid @enderror" id="input-lname" name="last_name" value="{{ old('last_name') ?: $user->last_name }}">
+                            <input type="text" class="form-control @error('last_name') is-invalid @enderror" id="input-lname" name="last_name" value="{{ old('last_name') ?: $user->last_name }}" maxlength="254">
                             @error('last_name')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -106,7 +111,7 @@
                     <div class="form-row">
                         <div class="form-group col-6">
                             <label for="input-phone">{{ trans('users.phone') }}</label>
-                            <input type="text" class="form-control @error('phone') is-invalid @enderror" id="input-phone" name="phone" value="{{ old('phone') ?: $user->phone }}">
+                            <input type="text" class="form-control @error('phone') is-invalid @enderror" id="input-phone" name="phone" value="{{ old('phone') ?: $user->phone }}" maxlength="254">
                             @error('phone')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -114,7 +119,7 @@
 
                         <div class="form-group col-6">
                             <label for="input-address">{{ trans('users.address') }}</label>
-                            <input type="text" class="form-control @error('address') is-invalid @enderror" id="input-address" name="address" value="{{ old('address') ?: $user->address }}">
+                            <input type="text" class="form-control @error('address') is-invalid @enderror" id="input-address" name="address" value="{{ old('address') ?: $user->address }}" maxlength="254">
                             @error('address')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -124,6 +129,7 @@
                     @can('update-user-permission')
                         <div class="card">
                             <div class="card-header">{{ trans('users.assign-permissions') }}</div>
+
                             <div class="card-body row row-cols-1 row-cols-md-2 row-cols-xl-4 px-5">
                                 @foreach ($permissions as $permission)
                                     <div class="custom-control custom-switch">
