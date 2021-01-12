@@ -10,10 +10,10 @@ return [
     'search' => 'Search',
     'permissions' => 'Permissions',
     'users' => 'Users',
+    'categories' => 'Categories',
     'sidebar' => [
         'book' => [
             'books' => 'Books',
-            'categories' => 'Categories',
             'authors' => 'Authors',
             'publishers' => 'Publishers',
             'borrow-requests' => 'Borrow Requests',
