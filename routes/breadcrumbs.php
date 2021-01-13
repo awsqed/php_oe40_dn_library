@@ -64,3 +64,9 @@ Breadcrumbs::resource('dashboard', 'categories', trans('dashboard.categories'), 
     'create',
     'edit',
 ]);
+
+Breadcrumbs::resource('dashboard', 'authors', trans('dashboard.authors'), [
+    'index',
+    'create',
+    'edit',
+]);

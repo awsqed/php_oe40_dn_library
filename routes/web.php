@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Dashboard\UserController;
+use App\Http\Controllers\Dashboard\AuthorController;
 use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\PermissionController;
 
@@ -28,6 +29,8 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
     Route::resource('categories', CategoryController::class)->except([
         'show',
     ]);
+
+    Route::resource('authors', AuthorController::class);
 
 });
 
