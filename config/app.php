@@ -133,26 +133,26 @@ return [
     'cache-time' => 60,
     'default-image' => [
         'user' => 'images/users/user.png',
-        'category' => 'images/categories/category.png',
+        'author' => 'images/default.jpg',
         'publisher' => 'images/publishers/publisher.png',
         'book' => 'images/books/book.png',
     ],
     'image-size' => [
         'user' => [
-            'width' => 256,
-            'height' => 256,
+            'width' => 2048,
+            'height' => 2048,
         ],
-        'category' => [
-            'width' => 150,
-            'height' => 100,
+        'author' => [
+            'width' => 500,
+            'height' => 500,
         ],
         'publisher' => [
-            'width' => 150,
-            'height' => 100,
+            'width' => 500,
+            'height' => 500,
         ],
         'book' => [
-            'width' => 320,
-            'height' => 512,
+            'width' => 1280,
+            'height' => 2048,
         ],
     ],
     'fallback-category' => 1,

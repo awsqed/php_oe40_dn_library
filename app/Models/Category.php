@@ -47,4 +47,9 @@ class Category extends Model
         return $this->hasMany(Book::class);
     }
 
+    public function getBreadcrumbAttribute()
+    {
+        return $this->name;
+    }
+
 }
