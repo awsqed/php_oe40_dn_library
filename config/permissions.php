@@ -46,6 +46,10 @@ return [
         'read-book' => 'read-book',
         'update-book' => 'update-book',
         'delete-book' => 'delete-book',
+
+        // Borrow Request
+        'read-borrow-request' => 'read-borrow-request',
+        'update-borrow-request' => 'update-borrow-request',
     ]
 
 ];

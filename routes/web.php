@@ -6,6 +6,7 @@ use App\Http\Controllers\Dashboard\AuthorController;
 use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\PublisherController;
 use App\Http\Controllers\Dashboard\PermissionController;
+use App\Http\Controllers\Dashboard\BorrowRequestController;
 use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Home\LibraryController;
 
@@ -52,6 +53,10 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
     Route::resource('publishers', PublisherController::class)->except([
         'show',
     ]);
+
+    Route::get('/borrows', [BorrowRequestController::class, 'index'])->name('borrows.index');
+
+    Route::post('/borrows/{borrowRequest}/{action}', [BorrowRequestController::class, 'update'])->name('borrows.update');
 
 });
 

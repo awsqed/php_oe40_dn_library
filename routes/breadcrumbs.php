@@ -76,3 +76,8 @@ Breadcrumbs::resource('dashboard', 'publishers', trans('dashboard.publishers'), 
     'create',
     'edit',
 ]);
+
+Breadcrumbs::for("borrows.index", function ($trail) {
+    $trail->parent('dashboard');
+    $trail->push(trans('dashboard.borrow-requests'), route('borrows.index'));
+});
