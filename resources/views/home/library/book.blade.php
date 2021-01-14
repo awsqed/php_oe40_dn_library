@@ -20,7 +20,18 @@
                     <img src="{{ $book->cover }}" class="img-thumbnail book-cover">
                 </a>
 
-                @include('layouts.home.borrow-button')
+                @auth
+                    @include('layouts.home.borrow-button')
+                    <div class="col-12 p-0 like-button">
+                        @include('layouts.home.like-button')
+                    </div>
+                    <div class="col-12 p-0 fl-button mt-2">
+                        @include('layouts.home.follow-button', [
+                            'followable' => $book,
+                            'btnClasses' => 'btn-lg btn-block',
+                        ])
+                    </div>
+                @endauth
             </div>
 
             <div>
@@ -40,7 +51,7 @@
                         {{ $reviewCount }}
                         {{ trans_choice('library.reviews', $reviewCount) }}
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item like-count">
                         {{ $likeCount }}
                         {{ trans_choice('library.likes', $likeCount) }}
                     </li>
@@ -118,4 +129,8 @@
             </ul>
         </div>
     </div>
+
+    @push('page_scripts')
+        <script src="{{ mix('js/all.js') }}"></script>
+    @endpush
 </x-app>

@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Home;
 
 use App\Models\Book;
+use App\Models\Like;
+use App\Models\Follow;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\BorrowFormRequest;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class LibraryController extends Controller
 {
@@ -56,8 +59,7 @@ class LibraryController extends Controller
 
     public function borrowBook(BorrowFormRequest $request, Book $book)
     {
-        $user = Auth::user();
-        $user->bookBorrowRequests()->attach($book, [
+        Auth::user()->bookBorrowRequests()->attach($book, [
             'from' => $request->from,
             'to' => $request->to,
         ]);
@@ -67,11 +69,60 @@ class LibraryController extends Controller
 
     public function borrowHistory()
     {
+        return view('home.library.borrow-history', [
+            'history' => Auth::user()->bookBorrowRequests()->latest('pivot_created_at', 'from', 'to')->paginate(config('app.num-rows')),
+        ]);
+    }
+
+    public function toggleLike(Book $book)
+    {
         $user = Auth::user();
 
-        return view('home.library.borrow-history', [
-            'history' => $user->bookBorrowRequests()->latest('pivot_created_at', 'from', 'to')->paginate(config('app.num-rows')),
+        $like = Like::of($user, $book);
+        if ($like === null) {
+            $user->likes()->create([
+                'book_id' => $book->id,
+            ]);
+        } elseif ($like->trashed()) {
+            $like->restore();
+        } else {
+            $like->delete();
+        }
+
+        $isLiked = Like::check($user, $book);
+        $likeCount = $book->likes()->count();
+
+        return response()->json([
+            'likeButton' => view('layouts.home.like-button', [
+                'user' => $user,
+                'book' => $book,
+            ])->render(),
+            'likeCount' => $likeCount .' '. trans_choice('library.likes', $likeCount),
         ]);
+    }
+
+    public function toggleFollow($followableType, $followableId)
+    {
+        $user = Auth::user();
+        $model = Relation::getMorphedModel($followableType);
+        $followable = $model::findOrFail($followableId);
+
+        $follow = Follow::of($user, $followable);
+        if ($follow === null) {
+            $followable->followers()->save(new Follow([
+                'user_id' => $user->id,
+            ]));
+        } elseif ($follow->trashed()) {
+            $follow->restore();
+        } else {
+            $follow->delete();
+        }
+
+        return view('layouts.home.follow-button', [
+            'user' => $user,
+            'followable' => $followable,
+            'btnClasses' => $followable instanceof Book ? 'btn-lg btn-block' : '',
+        ])->render();
     }
 
 }
