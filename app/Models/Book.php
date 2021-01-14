@@ -69,14 +69,14 @@ class Book extends Model
 
     public function getAvgRatingAttribute()
     {
-        return $this->reviews->avg('pivot.rating');
+        return (int) $this->reviews->avg('pivot.rating');
     }
 
     public function printAvgRatingText()
     {
         $star = '';
 
-        $avgRating = (int) $this->avg_rating;
+        $avgRating = $this->avg_rating;
         if ($avgRating) {
             $star .= '<span class="text-danger">';
             for ($i = 0; $i < $avgRating; $i++) {
