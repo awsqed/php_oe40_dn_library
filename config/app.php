@@ -134,7 +134,7 @@ return [
     'default-image' => [
         'user' => 'images/users/user.png',
         'author' => 'images/default.jpg',
-        'publisher' => 'images/publishers/publisher.png',
+        'publisher' => 'images/default.jpg',
         'book' => 'images/books/book.png',
     ],
     'image-size' => [

@@ -49,7 +49,7 @@
         <a href="#" class="nav-link">
             <i class="nav-icon fas fa-book"></i>
             <p>
-                {{ trans('dashboard.sidebar.book.books') }}
+                {{ trans('dashboard.books') }}
                 <i class="right fas fa-angle-left"></i>
             </p>
         </a>
@@ -83,9 +83,9 @@
 
             @can('read-publisher')
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                     <a href="{{ route('publishers.index') }}" class="nav-link {{ Request::routeIs('publishers.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-newspaper"></i>
-                        <p>{{ trans('dashboard.sidebar.book.publishers') }}</p>
+                        <p>{{ trans('dashboard.publishers') }}</p>
                     </a>
                 </li>
             @endcan
@@ -93,7 +93,7 @@
             <li class="nav-item">
                 <a href="#" class="nav-link">
                     <i class="nav-icon fas fa-clipboard-list"></i>
-                    <p>{{ trans('dashboard.sidebar.book.borrow-requests') }}</p>
+                    <p>{{ trans('dashboard.borrow-requests') }}</p>
                 </a>
             </li>
         </ul>

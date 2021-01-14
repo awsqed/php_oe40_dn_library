@@ -10,14 +10,10 @@ return [
     'search' => 'Search',
     'permissions' => 'Permissions',
     'users' => 'Users',
+    'books' => 'Books',
     'categories' => 'Categories',
     'authors' => 'Authors',
-    'sidebar' => [
-        'book' => [
-            'books' => 'Books',
-            'publishers' => 'Publishers',
-            'borrow-requests' => 'Borrow Requests',
-        ],
-    ],
+    'publishers' => 'Publishers',
+    'borrow-requests' => 'Borrow Requests',
 
 ];

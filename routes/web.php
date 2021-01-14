@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Dashboard\UserController;
 use App\Http\Controllers\Dashboard\AuthorController;
 use App\Http\Controllers\Dashboard\CategoryController;
+use App\Http\Controllers\Dashboard\PublisherController;
 use App\Http\Controllers\Dashboard\PermissionController;
 
 Route::get('/', function () {
@@ -22,6 +23,7 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
         'update',
     ]);
 
+    // TODO: Redirect users.show to ProfileController
     Route::resource('users', UserController::class)->except([
         'show',
     ]);
@@ -30,7 +32,14 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
         'show',
     ]);
 
-    Route::resource('authors', AuthorController::class);
+    // TODO: Redirect authors.show to
+    Route::resource('authors', AuthorController::class)->except([
+        'show',
+    ]);
+
+    Route::resource('publishers', PublisherController::class)->except([
+        'show',
+    ]);
 
 });
 
