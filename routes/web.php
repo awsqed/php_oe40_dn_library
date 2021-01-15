@@ -6,10 +6,12 @@ use App\Http\Controllers\Dashboard\AuthorController;
 use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\PublisherController;
 use App\Http\Controllers\Dashboard\PermissionController;
+use App\Http\Controllers\Home\HomeController;
+use App\Http\Controllers\Home\LibraryController;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/books', [LibraryController::class, 'index'])->name('library.index');
 
 Route::prefix('dashboard')->middleware('auth')->group(function () {
 

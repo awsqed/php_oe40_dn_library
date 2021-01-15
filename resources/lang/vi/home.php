@@ -4,7 +4,7 @@ return [
 
     'random-books' => 'Bạn Đã Đọc Chưa?',
     'browse-books' => 'Xem Tất Cả Sách',
-    'random-categories' => 'Xem Theo Thể Loại',
-    'browse-categories' => 'Xem Tất Cả Thể Loại',
+    'random-authors' => 'Xem Theo Tác Giả',
+    'browse-authors' => 'Xem Tất Cả Tác Giả',
 
 ];

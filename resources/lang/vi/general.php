@@ -15,5 +15,8 @@ return [
     'action' => 'Hành Động',
     'result-count' => 'Hiện thị kết quả từ :from tới :to',
     'save' => 'Lưu',
+    'search' => 'Tìm',
+    'no-result' => 'Không Tìm Thấy Kết Quả Nào',
+    'cancel' => 'Huỷ',
 
 ];
