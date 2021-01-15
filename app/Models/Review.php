@@ -16,4 +16,20 @@ class Review extends Pivot
 
     protected $guarded = [];
 
+    public function getRatingTextAttribute()
+    {
+        $star = '';
+
+        $avgRating = $this->rating;
+        if ($avgRating) {
+            $star .= '<span class="text-danger">';
+            for ($i = 0; $i < $avgRating; $i++) {
+                $star .= '★';
+            }
+            $star .= '</span>';
+        }
+
+        return $star;
+    }
+
 }

@@ -120,7 +120,9 @@ class User extends Authenticatable
 
     public function reviews()
     {
-        return $this->belongsToMany(Book::class, 'reviews')->using(Review::class);
+        return $this->belongsToMany(Book::class, 'reviews')
+                    ->using(Review::class)
+                    ->withPivot('rating', 'comment', 'reviewed_at');
     }
 
     public function getFullnameAttribute()

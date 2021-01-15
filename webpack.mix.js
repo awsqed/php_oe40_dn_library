@@ -16,7 +16,7 @@ mix.js('resources/js/app.js', 'public/js')
     .sourceMaps();
 
 mix.scripts('public/js/input-image.js', 'public/js/all.js');
-mix.styles('public/css/dashboard.css', 'public/css/all.css');
+mix.styles('public/css/general.css', 'public/css/all.css');
 
 if (mix.inProduction()) {
     mix.version();

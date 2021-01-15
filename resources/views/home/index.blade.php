@@ -10,13 +10,13 @@
             <div class="card-deck row-cols-4">
                 @foreach ($randomBooks as $book)
                     <div class="card text-center">
-                        <a href="">
+                        <a href="{{ route('library.book', $book) }}">
                             <img src="{{ $book->cover }}" class="card-img-top">
                         </a>
                         <div class="card-body">
                             <p class="card-text">
                                 <p class="text-muted">{{ Str::title($book->author->fullname) }}</p>
-                                <a href="" class="h5 font-weight-bold text-reset text-decoration-none">
+                                <a href="{{ route('library.book', $book) }}" class="h5 font-weight-bold text-reset text-decoration-none">
                                     {{ Str::title($book->title) }}
                                 </a>
                             </p>
