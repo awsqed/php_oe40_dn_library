@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\BorrowFormRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class LibraryController extends Controller
 {
@@ -32,7 +33,14 @@ class LibraryController extends Controller
         $books = Book::with('image', 'author', 'reviews');
 
         if ($request->filled('category')) {
-            $books->where('category_id', $request->category);
+            try {
+                $category = Category::findOrFail($request->category);
+                $subCategories = $category->allChilds;
+
+                $books->whereIn('category_id', $subCategories->push($category)->pluck('id')->toArray());
+            } catch (ModelNotFoundException $e) {
+                return redirect()->route('library.index');
+            }
         }
 
         if ($request->filled('search')) {
@@ -43,6 +51,9 @@ class LibraryController extends Controller
                         ->orWhereHas('author', function (Builder $query) use ($search) {
                             $query->whereRaw('LOWER(first_name) like ?', $search)
                                     ->orWhereRaw('LOWER(last_name) like ?', $search);
+                        })
+                        ->orWhereHas('publisher', function (Builder $query) use ($search) {
+                            $query->whereRaw('LOWER(name) like ?', $search);
                         });
             });
         }

@@ -18,7 +18,7 @@
             </x-slot>
 
             <x-slot name="tbody">
-                @foreach ($history as $book)
+                @forelse ($history as $book)
                     @php
                         $pivot = $book->pivot;
                         switch ($pivot->status_text) {
@@ -53,10 +53,14 @@
                         <td>{{ $pivot->status_text }}</td>
                         <td>{{ $pivot->note_text }}</td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr class="text-center"><td colspan="6">{{ trans('general.no-result') }}</td></tr>
+                @endforelse
             </x-slot>
 
-            <x-pagination :data="$history"/>
+            @if ($history->count())
+                <x-pagination :data="$history"/>
+            @endif
         </x-table>
     </div>
 </x-app>

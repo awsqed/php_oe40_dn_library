@@ -2,7 +2,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">
+                <h5 class="modal-title">
                     <i>{{ Str::title($book->title) }}</i>
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -14,17 +14,17 @@
                 <form id="borrowForm" action="{{ route('library.borrow', $book) }}" method="POST">
                     @csrf
 
-                    <div class="form-group">
+                    <div class="form-group text-left">
                         <label for="input-title">{{ trans('books.title') }}</label>
                         <input type="text" class="form-control-plaintext" id="input-title" value="{{ Str::title($book->title) }}">
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group text-left">
                         <label for="input-from">{{ trans('library.borrow.from') }}</label>
                         <input type="date" class="form-control" id="input-from" name="from" required autofocus>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group text-left">
                         <label for="input-to">{{ trans('library.borrow.to') }}</label>
                         <input type="date" class="form-control" id="input-to" name="to" required>
                     </div>

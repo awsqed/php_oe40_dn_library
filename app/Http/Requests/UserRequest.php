@@ -11,7 +11,7 @@ class UserRequest extends FormRequest
 
     public function authorize()
     {
-        if ($this->routeIs('register')) {
+        if ($this->is('register')) {
             return true;
         } elseif ($this->routeIs('users.store')) {
             return Gate::allows('create-user');
