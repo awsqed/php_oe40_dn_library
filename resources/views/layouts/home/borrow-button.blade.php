@@ -1,6 +1,6 @@
 @auth
     @if (App\Models\BorrowRequest::getLatestProcessing($user, $book))
-        <a href="{{ route('library.borrow.history') }}" class="text-center text-uppercase text-primary font-weight-bold mt-3">
+        <a href="{{ route('library.borrow.history') }}" class="text-uppercase text-primary font-weight-bold">
             {{ trans('library.borrow.under-process') }}
         </a>
     @elseif ($borrowRequest = App\Models\BorrowRequest::getCurrentBorrowing($user, $book))
@@ -23,7 +23,7 @@
             </tr>
         </table>
     @else
-        <button class="btn btn-block btn-lg btn-outline-dark mt-2" data-toggle="modal" data-target="#borrow-modal">
+        <button class="btn btn-block btn-lg btn-outline-dark" data-toggle="modal" data-target="#borrow-modal">
             {{ trans('library.borrow.borrow-this-book') }}
         </button>
         @include('layouts.home.borrow-modal')

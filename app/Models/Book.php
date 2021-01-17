@@ -19,8 +19,7 @@ class Book extends Model
     {
         $model = $this;
         return Cache::remember("book-{$model->id}-cover", config('app.cache-time'), function () use ($model) {
-            $image = $model->image;
-            $imagePath = $image == null ? '' : $image->path;
+            $imagePath = optional($model->image)->path ?? '';
             return !empty($imagePath)
                     ? asset("storage/{$imagePath}")
                     : asset('storage/'. config('app.default-image.book'));

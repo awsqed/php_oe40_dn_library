@@ -21,8 +21,7 @@ class Publisher extends Model
     {
         $model = $this;
         return Cache::remember("publisher-{$model->id}-logo", config('app.cache-time'), function () use ($model) {
-            $image = $model->image;
-            $imagePath = $image == null ? '' : $image->path;
+            $imagePath = optional($model->image)->path ?? '';
             return !empty($imagePath)
                     ? asset("storage/{$imagePath}")
                     : asset('storage/'. config('app.default-image.publisher'));

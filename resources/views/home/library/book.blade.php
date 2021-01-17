@@ -14,18 +14,20 @@
             @endforeach
         @endif
 
-        <div>
-            <div class="float-left mr-4 d-flex flex-column align-items-center">
+        <div class="d-flex">
+            <div class="col-3 mr-3 px-4 d-flex flex-column align-items-center">
                 <a href="{{ route('library.book', $book) }}">
                     <img src="{{ $book->cover }}" class="img-thumbnail book-cover">
                 </a>
 
                 @auth
-                    @include('layouts.home.borrow-button')
-                    <div class="col-12 p-0 like-button">
+                    <div class="align-self-stretch px-3 text-center mt-2">
+                        @include('layouts.home.borrow-button')
+                    </div>
+                    <div class="align-self-stretch px-3 like-button">
                         @include('layouts.home.like-button')
                     </div>
-                    <div class="col-12 p-0 fl-button mt-2">
+                    <div class="align-self-stretch px-3 mt-2 fl-button">
                         @include('layouts.home.follow-button', [
                             'followable' => $book,
                             'btnClasses' => 'btn-lg btn-block',
@@ -34,7 +36,7 @@
                 @endauth
             </div>
 
-            <div>
+            <div class="flex-fill">
                 <h2 class="font-weight-bold">
                     <a href="{{ route('library.book', $book) }}" class="text-reset text-decoration-none">
                         {{ Str::title($book->title) }}
@@ -58,7 +60,7 @@
                         {{ trans_choice('library.likes', $likeCount) }}
                     </li>
                 </ul>
-                <p class="mt-4 h5 lead text-justify">{{ $book->description }}</p>
+                <p class="mt-4 h5 lead text-justify">{!! nl2br(e($book->description)) !!}</p>
                 <hr>
                 <div class="text-muted d-flex flex-column">
                     <a href="{{ route('library.index', ['category' => $book->category->id]) }}" class="text-reset text-decoration-none">
@@ -71,8 +73,6 @@
                     <span>{{ trans('library.published-by') }} <strong>{{ $book->publisher->name }}</strong></span>
                 </div>
             </div>
-
-            <div class="clearfix"></div>
         </div>
 
         <div class="mt-5">
