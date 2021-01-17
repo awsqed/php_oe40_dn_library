@@ -131,6 +131,7 @@ return [
 
     'num-rows' => 10,
     'num-followers' => 39,
+    'num-follows-profile' => 18,
     'cache-time' => 60,
     'default-image' => [
         'user' => 'images/users/user.png',

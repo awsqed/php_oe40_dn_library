@@ -12,7 +12,7 @@
                 $imgW = config('app.image-size.user.width');
                 $imgH = config('app.image-size.user.height');
             @endphp
-            <img id="imageHolder" class="img-thumbnail" src="{{ $user->avatar() }}" width="{{ $imgW }}" height="{{ $imgH }}">
+            <img id="imageHolder" class="img-thumbnail" src="{{ $user->avatar }}" width="{{ $imgW }}" height="{{ $imgH }}">
             <div class="custom-file my-3">
                 <input id="input-image" name="image" type="file" class="custom-file-input @error('image') is-invalid @enderror" accept="image/*">
                 <label class="custom-file-label" for="input-image"></label>

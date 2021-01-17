@@ -19,5 +19,6 @@ return [
     'search' => 'Search',
     'no-result' => 'No Result',
     'cancel' => 'Cancel',
+    'profile' => 'Profile',
 
 ];

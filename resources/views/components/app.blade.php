@@ -70,6 +70,9 @@
                             <a class="dropdown-item" href="{{ route('dashboard') }}">
                                 {{ trans('dashboard.dashboard') }}
                             </a>
+                            <a class="dropdown-item" href="{{ route('library.profile') }}">
+                                {{ trans('general.profile') }}
+                            </a>
                             <a class="dropdown-item" href="{{ route('library.borrow.history') }}">
                                 {{ trans('library.borrow.history') }}
                             </a>

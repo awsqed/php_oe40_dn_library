@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Home;
 
+use App\Models\User;
 use App\Models\Book;
 use App\Models\Like;
 use App\Models\Author;
@@ -169,6 +170,42 @@ class LibraryController extends Controller
             'author' => $author,
             'follows' => $author->followers()->with('user', 'user.image')->latest('followed_at')->paginate(config('app.num-followers')),
             'books' => $author->books()->with('image', 'reviews')->paginate(config('app.num-rows')),
+        ]);
+    }
+
+    public function viewProfile(User $user)
+    {
+        $pUser = $user->id == null ? Auth::user() : $user;
+        $likes = $pUser->likes()->with('book', 'book.image')->latest('liked_at')->paginate(config('app.num-rows'));
+        $followers = $pUser->followers()
+                            ->with('user', 'user.image')
+                            ->latest('followed_at')
+                            ->paginate(config('app.num-follows-profile'));
+
+        $followings = [];
+        $followableTypes = [
+            'user',
+            'author',
+            'book',
+        ];
+        foreach($followableTypes as $followableType) {
+            $followings[$followableType] = $pUser->followings()
+                                                    ->with('followable', 'followable.image')
+                                                    ->where('followable_type', $followableType)
+                                                    ->latest('followed_at')
+                                                    ->paginate(config('app.num-follows-profile'));
+        }
+
+        $reviews = $pUser->reviews()->with('author', 'image')->latest('reviewed_at')->paginate(config('app.num-rows'));
+
+        return view('home.library.profile', [
+            'pUser' => $pUser,
+            'likedBooks' => $likes,
+            'followers' => $followers,
+            'userFollowings' => $followings['user'],
+            'authorFollowings' => $followings['author'],
+            'bookFollowings' => $followings['book'],
+            'reviews' => $reviews,
         ]);
     }
 

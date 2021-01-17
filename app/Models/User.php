@@ -42,7 +42,7 @@ class User extends Authenticatable
         return $this->morphOne(Image::class, 'imageable');
     }
 
-    public function avatar()
+    public function getAvatarAttribute()
     {
         $model = $this;
         return Cache::remember("{$model->id}-avatar", config('app.cache-time'), function () use ($model) {
