@@ -44,7 +44,10 @@ class Book extends Model
 
     public function borrowers()
     {
-        return $this->belongsToMany(User::class, 'borrow_requests')->using(BorrowRequest::class);
+        return $this->belongsToMany(User::class, 'borrow_requests')
+                    ->using(BorrowRequest::class)
+                    ->withPivot('from', 'to', 'note', 'status', 'processed_at', 'returned_at')
+                    ->withTimestamps();
     }
 
     public function likes()

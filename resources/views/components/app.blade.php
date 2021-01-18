@@ -70,6 +70,9 @@
                             <a class="dropdown-item" href="{{ route('dashboard') }}">
                                 {{ trans('dashboard.dashboard') }}
                             </a>
+                            <a class="dropdown-item" href="{{ route('library.borrow.history') }}">
+                                {{ trans('library.borrow.history') }}
+                            </a>
                             <div class="dropdown-divider"></div>
                             <form class="dropdown-item" action="{{ route('logout') }}" method="POST">
                                 @csrf

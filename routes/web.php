@@ -17,6 +17,10 @@ Route::name('library.')->group(function () {
 
     Route::get('/book/{book}', [LibraryController::class, 'viewBook'])->name('book');
 
+    Route::post('/book/{book}/borrow', [LibraryController::class, 'borrowBook'])->name('borrow');
+
+    Route::get('/borrows', [LibraryController::class, 'borrowHistory'])->name('borrow.history');
+
 });
 
 Route::prefix('dashboard')->middleware('auth')->group(function () {

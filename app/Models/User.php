@@ -100,7 +100,10 @@ class User extends Authenticatable
 
     public function bookBorrowRequests()
     {
-        return $this->belongsToMany(Book::class, 'borrow_requests')->using(BorrowRequest::class);
+        return $this->belongsToMany(Book::class, 'borrow_requests')
+                    ->using(BorrowRequest::class)
+                    ->withPivot('from', 'to', 'note', 'status', 'processed_at', 'returned_at')
+                    ->withTimestamps();
     }
 
     public function likes()

@@ -157,6 +157,16 @@ return [
     ],
     'fallback-category' => 1,
     'random-items' => 4,
+    'borrow-request' => [
+        'status-code' => [
+            'new' => -1,
+            'rejected' => 0,
+            'accepted' => 1,
+            'overdue' => 2,
+            'returned' => 3,
+            'returned-late' => 4,
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------

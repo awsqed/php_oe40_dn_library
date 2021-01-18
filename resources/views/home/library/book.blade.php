@@ -1,14 +1,26 @@
 <x-app :title="Str::title($book->title)">
     @php
+        $user = Auth::user();
+
         $reviewCount = $book->reviews()->count();
         $likeCount = $book->likes()->count();
     @endphp
     <div class="col-9 mx-auto my-5 bg-white border p-4">
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                <div class="alert alert-danger">
+                    {{ $error }}
+                </div>
+            @endforeach
+        @endif
+
         <div>
-            <div class="float-left mr-4 d-flex flex-column">
+            <div class="float-left mr-4 d-flex flex-column align-items-center">
                 <a href="{{ route('library.book', $book) }}">
                     <img src="{{ $book->cover }}" class="img-thumbnail book-cover">
                 </a>
+
+                @include('layouts.home.borrow-button')
             </div>
 
             <div>
