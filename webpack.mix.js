@@ -15,7 +15,13 @@ mix.js('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
     .sourceMaps();
 
-mix.scripts('public/js/input-image.js', 'public/js/all.js');
+mix.scripts(
+    [
+        'public/js/input-image.js',
+        'public/js/borrows.js',
+    ],
+    'public/js/all.js'
+);
 mix.styles('public/css/general.css', 'public/css/all.css');
 
 if (mix.inProduction()) {

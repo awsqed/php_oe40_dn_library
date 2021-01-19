@@ -45,7 +45,7 @@
     'read-publisher',
     'read-books',
 ])
-    <li class="nav-item has-treeview {{ Request::routeIs('books.*', 'categories.*', 'authors.*', 'publishers.*') ? 'menu-open' : '' }}">
+    <li class="nav-item has-treeview {{ Request::routeIs('books.*', 'categories.*', 'authors.*', 'publishers.*', 'borrows.*') ? 'menu-open' : '' }}">
         <a href="#" class="nav-link">
             <i class="nav-icon fas fa-book"></i>
             <p>
@@ -74,7 +74,7 @@
 
             @can('read-author')
                 <li class="nav-item">
-                     <a href="{{ route('authors.index') }}" class="nav-link {{ Request::routeIs('authors.*') ? 'active' : '' }}">
+                    <a href="{{ route('authors.index') }}" class="nav-link {{ Request::routeIs('authors.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-book-reader"></i>
                         <p>{{ trans('dashboard.authors') }}</p>
                     </a>
@@ -83,19 +83,21 @@
 
             @can('read-publisher')
                 <li class="nav-item">
-                     <a href="{{ route('publishers.index') }}" class="nav-link {{ Request::routeIs('publishers.*') ? 'active' : '' }}">
+                    <a href="{{ route('publishers.index') }}" class="nav-link {{ Request::routeIs('publishers.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-newspaper"></i>
                         <p>{{ trans('dashboard.publishers') }}</p>
                     </a>
                 </li>
             @endcan
 
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <i class="nav-icon fas fa-clipboard-list"></i>
-                    <p>{{ trans('dashboard.borrow-requests') }}</p>
-                </a>
-            </li>
+            @can('read-borrow-request')
+                <li class="nav-item">
+                    <a href="{{ route('borrows.index') }}" class="nav-link {{ Request::routeIs('borrows.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-clipboard-list"></i>
+                        <p>{{ trans('dashboard.borrow-requests') }}</p>
+                    </a>
+                </li>
+            @endcan
         </ul>
     </li>
 @endcan
