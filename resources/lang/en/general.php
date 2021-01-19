@@ -6,6 +6,7 @@ return [
         'no-permission' => 'You dont\' have the required permission to perform this action',
         'delete-user-self' => 'Cannot delete yourself',
         'delete-fallback-category' => 'Cannot delete this category',
+        'already-reviewed' => "Cannot review the same book twice",
     ],
     'locale' => [
         'en' => 'EN (English)',

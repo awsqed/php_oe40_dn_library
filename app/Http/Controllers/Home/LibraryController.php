@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Home;
 use App\Models\Book;
 use App\Models\Like;
 use App\Models\Follow;
+use App\Models\Review;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Requests\RateRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\BorrowFormRequest;
@@ -54,6 +56,7 @@ class LibraryController extends Controller
     {
         return view('home.library.book', [
             'book' => $book,
+            'reviews' => $book->reviews()->latest('reviewed_at')->paginate(config('app.num-rows')),
         ]);
     }
 
@@ -123,6 +126,29 @@ class LibraryController extends Controller
             'followable' => $followable,
             'btnClasses' => $followable instanceof Book ? 'btn-lg btn-block' : '',
         ])->render();
+    }
+
+    public function rateBook(RateRequest $request, Book $book)
+    {
+        if (Review::hasReview(Auth::user(), $book)) {
+            abort(403, trans('general.messages.already-reviewed'));
+        }
+
+        $book->reviews()->attach(Auth::id(), [
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+            'reviewed_at' => now(),
+        ]);
+
+        $reviewCount = $book->reviews()->count();
+
+        return response()->json([
+            'reviewList' => view('layouts.home.reviews', [
+                            'reviews' => $book->reviews()->latest('reviewed_at')->paginate(config('app.num-rows')),
+                        ])->render(),
+            'avgRating' => $book->printAvgRatingText() .' '. $book->avg_rating .' / 5',
+            'reviewCount' => $reviewCount .' '. trans_choice('library.reviews', $reviewCount),
+        ]);
     }
 
 }

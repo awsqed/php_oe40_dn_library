@@ -6,6 +6,7 @@ return [
         'no-permission' => 'Quyền hạn không đủ',
         'delete-user-self' => 'Không thể xoá tài khoản đang sử dụng',
         'delete-fallback-category' => 'Không thể xoá thể loại này',
+        'already-reviewed' => "Không thể đánh giá một cuốn sách hai lần",
     ],
     'locale' => [
         'en' => 'EN (Tiếng Anh)',

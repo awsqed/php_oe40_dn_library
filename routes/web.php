@@ -26,6 +26,8 @@ Route::name('library.')->group(function () {
 
     Route::post('/{followableType}/{followableId}/follow', [LibraryController::class, 'toggleFollow'])->name('follow');
 
+    Route::post('/book/{book}/rate', [LibraryController::class, 'rateBook'])->name('rate');
+
 });
 
 Route::prefix('dashboard')->middleware('auth')->group(function () {

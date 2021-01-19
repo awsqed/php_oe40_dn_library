@@ -20,6 +20,7 @@ mix.scripts(
         'public/js/input-image.js',
         'public/js/borrows.js',
         'public/js/like-follow-button.js',
+        'public/js/reviews.js',
     ],
     'public/js/all.js'
 );

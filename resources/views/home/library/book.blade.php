@@ -43,11 +43,11 @@
                     <small>{{ Str::title($book->author->fullname) }}</small>
                 </h2>
                 <ul class="list-group list-group-horizontal">
-                    <li class="list-group-item">
+                    <li class="list-group-item avg-rating">
                         {!! $book->printAvgRatingText() !!}
-                        <span>{{ $book->avg_rating }} / 5</span>
+                        {{ $book->avg_rating }} / 5
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item review-count">
                         {{ $reviewCount }}
                         {{ trans_choice('library.reviews', $reviewCount) }}
                     </li>
@@ -87,45 +87,36 @@
                     {{ trans('library.guest.review-message') }}
                 </div>
             @else
-                <form>
-                    <div class="mb-3">
-                        <h5 class="font-weight-bold">{{ trans('library.rating') }}</h5>
-                        <div class="rating h4">
-                            ☆☆☆☆☆
+                @if (!App\Models\Review::hasReview($user, $book))
+                    <div class="review-form">
+                        <div class="form-group">
+                            <label for="input-rating" class="h5">{{ trans('library.rating') }}</label>
+                            <select id="input-rating" class="custom-select" name="rating" required>
+                                <option selected hidden disabled></option>
+                                <option value="5">★★★★★</option>
+                                <option value="4">★★★★</option>
+                                <option value="3">★★★</option>
+                                <option value="2">★★</option>
+                                <option value="1">★</option>
+                            </select>
+                            <span class="invalid-feedback"></span>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label class="h5" for="input-comment">{{ trans('library.comment') }}</label>
-                        <textarea class="form-control" id="input-comment" rows="3"></textarea>
+                        <div class="form-group">
+                            <label for="input-comment" class="h5">{{ trans('library.comment') }}</label>
+                            <textarea id="input-comment" class="form-control" rows="3" name="comment"></textarea>
+                            <span class="invalid-feedback"></span>
+                        </div>
+
+                        <button class="btn btn-outline-dark btn-rate" value="{{ $book->id }}">
+                            {{ trans('library.submit') }}
+                        </button>
                     </div>
-                    <button class="btn btn-outline-dark">{{ trans('library.submit') }}</button>
-                </form>
+                @endif
             @endguest
 
-            <ul class="list-unstyled mt-5 mb-0">
-                @forelse ($book->reviews as $review)
-                    <li class="media mt-2 border p-3">
-                        <img src="{{ $review->avatar() }}" class="img-thumbnail rounded-circle rounded-sm align-self-start mr-3" width="75" height="75">
-                        <div class="media-body">
-                            <h5 class="mt-0">
-                                <strong>{{ Str::title($review->fullname) }} </strong>
-                                {{ trans('library.rated-it') }}
-                                <span class="text-danger">{!! $review->pivot->rating_text !!}</span>
-                                <small class="float-right text-muted">{{ $review->pivot->reviewed_at }}</small>
-                            </h5>
-                            <p class="text-justify">{{ $review->pivot->comment }}</p>
-                        </div>
-                    </li>
-                @empty
-                    <li class="h5 text-center text-uppercase">
-                        @guest
-                            {{ trans('library.guest.no-reviews') }}
-                        @else
-                            {{ trans('library.no-reviews') }}
-                        @endguest
-                    </li>
-                @endforelse
+            <ul class="list-unstyled mt-4 review-list">
+                @include('layouts.home.reviews')
             </ul>
         </div>
     </div>
