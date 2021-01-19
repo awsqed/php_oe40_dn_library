@@ -22,6 +22,10 @@ Route::name('library.')->group(function () {
 
     Route::get('/borrows', [LibraryController::class, 'borrowHistory'])->name('borrow.history');
 
+    Route::post('/book/{book}/like', [LibraryController::class, 'toggleLike'])->name('like');
+
+    Route::post('/{followableType}/{followableId}/follow', [LibraryController::class, 'toggleFollow'])->name('follow');
+
 });
 
 Route::prefix('dashboard')->middleware('auth')->group(function () {
