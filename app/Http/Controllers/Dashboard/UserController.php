@@ -2,132 +2,70 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\User;
-use App\Models\Permission;
 use App\Http\Requests\UserRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
+use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Repositories\Interfaces\PermissionRepositoryInterface;
 
 class UserController extends Controller
 {
+
+    public function __construct(
+        UserRepositoryInterface $userRepo,
+        PermissionRepositoryInterface $permRepo
+    ) {
+        $this->userRepo = $userRepo;
+        $this->permRepo = $permRepo;
+    }
 
     public function index()
     {
         $this->authorize('read-user');
 
-        return view('dashboard.users.index', [
-            'users' => User::paginate(config('app.num-rows')),
-        ]);
+        $users = $this->userRepo->paginate();
+
+        return view('dashboard.users.index', compact('users'));
     }
 
     public function create()
     {
         $this->authorize('create-user');
 
-        return view('dashboard.users.create', [
-            'permissions' => Permission::all(),
-        ]);
+        $permissions = $this->permRepo->all();
+
+        return view('dashboard.users.create', compact('permissions'));
     }
 
     public function store(UserRequest $request)
     {
-        $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->username),
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'gender' => $request->gender,
-            'date_of_birth' => $request->birthday,
-            'phone' => $request->phone,
-            'address' => $request->address,
-        ]);
+        $this->userRepo->createUser($request);
 
-        $imagePath = $request->has('image')
-                        ? $request->file('image')->store('images/users', 'public')
-                        : config('app.default-image.user');
-        $user->image()->create([
-            'path' => $imagePath,
-        ]);
-
-        if (Gate::allows('update-user-permission')) {
-            if ($request->has('permissions')) {
-                $user->permissions()->attach($request->permissions);
-            }
-        }
-
-        return back()->with('success', trans('users.messages.user-created'));
+        return redirect()->route('users.index');
     }
 
-    public function edit(User $user)
+    public function edit($userId)
     {
         $this->authorize('update-user-info');
 
-        if (Gate::allows('update-user-permission')) {
-            return view('dashboard.users.edit', [
-                'user' => $user,
-                'permissions' => Permission::all(),
-            ]);
-        }
+        $user = $this->userRepo->find($userId);
+        $permissions = Gate::allows('update-user-permission') ? $this->permRepo->all() : [];
 
-        return view('dashboard.users.edit', [
-            'user' => $user,
-        ]);
+        return view('dashboard.users.edit', compact('user', 'permissions'));
     }
 
-    public function update(UserRequest $request, User $user)
+    public function update(UserRequest $request, $userId)
     {
-        $user->username = $request->username;
-        $user->email = $request->email;
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->gender = $request->gender;
-        $user->date_of_birth = $request->birthday;
-        $user->phone = $request->phone;
-        $user->address = $request->address;
+        $this->userRepo->updateUser($userId, $request);
 
-        $imagePath = $request->has('image')
-                        ? $request->file('image')->store('images/users', 'public')
-                        : config('app.default-image.user');
-
-        $image = $user->image();
-        if ($user->image) {
-            if ($imagePath != config('app.default-image.user')) {
-                $image->update([
-                    'path' => $imagePath,
-                ]);
-            }
-        } else {
-            $image->create([
-                'path' => $imagePath,
-            ]);
-        }
-        Cache::forget("{$user->id}-avatar");
-
-        if (Gate::allows('update-user-permission')) {
-            $user->permissions()->sync($request->permissions);
-        }
-
-        $user->push();
-
-        return back()->with('success', trans('users.messages.user-edited'));
+        return redirect()->route('users.index');
     }
 
-    public function destroy(User $user)
+    public function destroy($userId)
     {
         $this->authorize('delete-user');
 
-        if (Auth::id() === $user->id) {
-            abort(403, trans('general.messages.delete-user-self'));
-        }
-
-        $user->delete();
+        $this->userRepo->deleteUser($userId);
 
         return back();
     }
