@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class BorrowRequest extends Pivot
 {
 
-    public $table = 'borrow_requests';
+    protected $table = 'borrow_requests';
 
     public $incrementing = true;
 
@@ -17,12 +17,12 @@ class BorrowRequest extends Pivot
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function book()
     {
-        return $this->belongsTo(Book::class);
+        return $this->belongsTo(Book::class, 'book_id');
     }
 
     public function getStatusTextAttribute()
@@ -32,7 +32,7 @@ class BorrowRequest extends Pivot
                 return trans('library.borrow.rejected');
 
             case config('app.borrow-request.status-code.accepted'):
-                return date('Y-m-d') > $this->to
+                return now()->toDateString() > $this->to
                         ? trans('library.borrow.overdue')
                         : trans('library.borrow.borrowing');
 
@@ -70,7 +70,7 @@ class BorrowRequest extends Pivot
         return $query->latest('created_at', 'from', 'to', 'returned_at');
     }
 
-    public function scopeSearch($query, $search, $filter)
+    public function scopeSearch($query, $search, $filter = null)
     {
         $configKey = 'app.borrow-request.status-code';
 

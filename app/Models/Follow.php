@@ -10,6 +10,9 @@ class Follow extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'follows';
+
+    const CREATED_AT = null;
     const UPDATED_AT = 'followed_at';
 
     protected $guarded = [];
