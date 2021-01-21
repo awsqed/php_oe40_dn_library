@@ -49,8 +49,8 @@
                 <hr>
                 <div>
                     @foreach ($follows as $follow)
-                        <a href="">
-                            <img src="{{ $follow->user->avatar() }}" class="mb-2 follower-avatar">
+                        <a href="{{ route('library.profile', $follow->user) }}">
+                            <img src="{{ $follow->user->avatar }}" class="mb-2 follower-avatar">
                         </a>
                     @endforeach
                 </div>

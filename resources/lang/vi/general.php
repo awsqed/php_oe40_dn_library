@@ -19,5 +19,6 @@ return [
     'search' => 'Tìm',
     'no-result' => 'Không Tìm Thấy Kết Quả Nào',
     'cancel' => 'Huỷ',
+    'profile' => 'Trang Cá Nhân',
 
 ];

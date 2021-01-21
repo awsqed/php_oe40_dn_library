@@ -30,6 +30,8 @@ Route::name('library.')->group(function () {
 
     Route::get('/author/{author}', [LibraryController::class, 'viewAuthor'])->name('author');
 
+    Route::get('/profile/{user?}', [LibraryController::class, 'viewProfile'])->name('profile');
+
 });
 
 Route::prefix('dashboard')->middleware('auth')->group(function () {

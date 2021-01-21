@@ -28,7 +28,7 @@
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
-        <nav class="main-header navbar sticky-top navbar-expand navbar-white navbar-light">
+        <nav class="main-header navbar sticky-top navbar-expand navbar-white navbar-light bg-info">
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
@@ -38,7 +38,7 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item dropdown user-menu mr-1">
                     <a href="" class="nav-link dropdown d-inline-flex align-items-center" data-toggle="dropdown">
-                        <img src="{{ $currentUser->avatar() }}" class="rounded-circle elevation-2" width="32">
+                        <img src="{{ $currentUser->avatar }}" class="rounded-circle dashboard-avatar">
                         <span class="d-inline mx-2">
                             {{ trim($currentUser->fullname) ?: $currentUser->username }}
                         </span>
@@ -46,7 +46,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         <li class="user-header bg-primary">
-                            <img src="{{ $currentUser->avatar() }}" class="rounded-circle elevation-2">
+                            <img src="{{ $currentUser->avatar }}" class="rounded-circle">
                             <p>
                                 {{ trim($currentUser->fullname) ?: $currentUser->username }}
                                 <small>
