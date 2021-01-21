@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class Review extends Pivot
 {
 
-    public $table = 'reviews';
+    protected $table = 'reviews';
 
     public $incrementing = true;
 
@@ -20,10 +20,10 @@ class Review extends Pivot
     {
         $star = '';
 
-        $avgRating = $this->rating;
-        if ($avgRating) {
+        $rating = $this->rating;
+        if ($rating) {
             $star .= '<span class="text-danger">';
-            for ($i = 0; $i < $avgRating; $i++) {
+            for ($i = 0; $i < $rating; $i++) {
                 $star .= '★';
             }
             $star .= '</span>';
