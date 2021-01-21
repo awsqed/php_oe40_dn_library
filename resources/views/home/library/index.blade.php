@@ -16,11 +16,19 @@
                             'search' => $search,
                         ]);
                     @endphp
-                    <a href="{{ $href }}" class="list-group-item h6 font-weight-bold text-uppercase">
-                        {{ $category->name }}
-                    </a>
-                    @if (count($category->childs))
-                        <li class="list-group-item">
+                    <li class="list-group-item">
+                        @if ($category->childs->count())
+                            <a data-toggle="collapse" href="#childs-{{ $category->id }}" aria-expanded="true" aria-controls="childs-{{ $category->id }}">
+                                <i class="fas fa-angle-right mr-1"></i>
+                            </a>
+                        @endif
+                        <a href="{{ $href }}" class="h6 font-weight-bold text-uppercase">
+                            {{ $category->name }}
+                        </a>
+                    </li>
+
+                    @if ($category->childs->count())
+                        <li class="list-group-item collapse show" id="childs-{{ $category->id }}">
                             <ul class="list-group list-group-flush">
                                 @include('layouts.home.subcategories', [
                                     'categories' => $category->childs()->with('childs')->get(),
@@ -48,7 +56,7 @@
             </form>
             <div class="row row-cols-1 my-3 p-3">
                 @forelse ($books as $book)
-                    <div class="card p-0">
+                    <div class="card p-0 bg-light">
                         <div class="row no-gutters">
                             <div class="col-4">
                                 <a href="{{ route('library.book', $book) }}">
@@ -68,7 +76,7 @@
                                         <br />
                                         <small>{!! $book->printAvgRatingText() !!}</small>
                                     </h5>
-                                    <p class="card-text text-justify">{{ $book->description }}</p>
+                                    <p class="card-text text-justify">{!! nl2br(e($book->description)) !!}</p>
                                 </div>
                             </div>
                         </div>

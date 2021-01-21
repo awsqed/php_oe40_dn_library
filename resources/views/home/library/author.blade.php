@@ -88,7 +88,7 @@
                                             <br />
                                             <small>{!! $book->printAvgRatingText() !!}</small>
                                         </h5>
-                                        <p class="card-text text-justify">{{ $book->description }}</p>
+                                        <p class="card-text text-justify">{!! nl2br(e($book->description)) !!}</p>
                                     </div>
                                 </div>
                             </div>
