@@ -2,47 +2,49 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\Permission;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
+use App\Repositories\Interfaces\PermissionRepositoryInterface;
+
 
 class PermissionController extends Controller
 {
 
+    public function __construct(PermissionRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function index()
     {
-        Gate::authorize('read-permission');
+        $this->authorize('read-permission');
 
-        return view('dashboard.permissions.index', [
-            'permissions' => Permission::paginate(config('app.num-rows')),
-        ]);
+        $permissions = $this->repository->paginate();
+
+        return view('dashboard.permissions.index', compact('permissions'));
     }
 
-    public function edit(Permission $permission)
+    public function edit($permissionId)
     {
-        if (Gate::none(['read-permission', 'update-permission'])) {
-            abort(403, trans('general.messages.no-permission'));
-        }
+        $this->authorize('update-permission');
 
-        return view('dashboard.permissions.edit', [
-            'permission' => $permission,
-            'childs' => $permission->childArray(),
-        ]);
+        $permission = $this->repository->find($permissionId);
+        $childs = $permission->childArray();
+
+        return view('dashboard.permissions.edit', compact('permission', 'childs'));
     }
 
-    public function update(Request $request, Permission $permission)
+    public function update(Request $request, $permissionId)
     {
-        Gate::authorize('update-permission');
+        $this->authorize('update-permission');
 
         $validated = $request->validate([
             'description' => 'nullable|max:254',
         ]);
 
-        $permission->description = $validated['description'];
-        $permission->save();
+        $this->repository->update($permissionId, $validated);
 
-        return back();
+        return redirect()->route('permissions.index');
     }
 
 }
