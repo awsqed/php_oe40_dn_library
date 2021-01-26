@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasImage;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 
@@ -43,7 +44,7 @@ class Author extends Model
 
     public function getFullnameAttribute()
     {
-        return "{$this->first_name} {$this->last_name}";
+        return Str::title("{$this->first_name} {$this->last_name}");
     }
 
     public function getBreadcrumbAttribute()

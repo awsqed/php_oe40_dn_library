@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasImage;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 
@@ -55,6 +56,11 @@ class Book extends Model
         return $this->belongsToMany(User::class, 'reviews')
                     ->using(Review::class)
                     ->withPivot('rating', 'comment', 'reviewed_at');
+    }
+
+    public function getTitleAttribute($title)
+    {
+        return Str::title($title);
     }
 
     public function getAvgRatingAttribute()

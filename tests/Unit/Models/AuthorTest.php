@@ -37,7 +37,7 @@ class AuthorTest extends ModelTestCase
 
     public function test_author_has_an_avatar()
     {
-        $this->assertMorphOne('image', Image::class, 'imageable_id');
+        $this->assertMorphOne('imageRelation', Image::class, 'imageable_id');
     }
 
     public function test_author_has_many_books()

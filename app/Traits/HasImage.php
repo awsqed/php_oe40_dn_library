@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Cache;
 trait HasImage
 {
 
-    public function image()
+    public function imageRelation()
     {
         return $this->morphOne(Image::class, 'imageable');
     }
@@ -18,7 +18,7 @@ trait HasImage
         $model = $this;
         $cacheKey = get_class($this) .'.'. $this->id;
         return Cache::remember($cacheKey, config('app.cache-time'), function () use ($model) {
-            $imagePath = optional($model->image()->first())->path ?? '';
+            $imagePath = optional($model->imageRelation)->path ?? '';
             return !empty($imagePath)
                     ? asset("storage/{$imagePath}")
                     : asset('storage/'. config('app.default-image.'. $model->getMorphClass()));
@@ -27,8 +27,8 @@ trait HasImage
 
     public function setImageAttribute($imagePath)
     {
-        $image = $this->image();
-        if ($image->first()) {
+        $image = $this->imageRelation();
+        if ($this->imageRelation) {
             if ($imagePath != config('app.default-image.'. $this->getMorphClass())) {
                 $image->update([
                     'path' => $imagePath,

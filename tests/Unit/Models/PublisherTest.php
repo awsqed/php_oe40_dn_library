@@ -36,7 +36,7 @@ class PublisherTest extends ModelTestCase
 
     public function test_publisher_has_a_logo()
     {
-        $this->assertMorphOne('image', Image::class, 'imageable_id');
+        $this->assertMorphOne('imageRelation', Image::class, 'imageable_id');
     }
 
     public function test_publisher_has_many_books()
