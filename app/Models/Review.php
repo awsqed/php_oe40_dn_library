@@ -16,6 +16,16 @@ class Review extends Pivot
 
     protected $guarded = [];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function book()
+    {
+        return $this->belongsTo(Book::class, 'book_id');
+    }
+
     public function getRatingTextAttribute()
     {
         $star = '';
@@ -30,11 +40,6 @@ class Review extends Pivot
         }
 
         return $star;
-    }
-
-    static public function hasReview(User $user, Book $book)
-    {
-        return Review::where('user_id', $user->id)->where('book_id', $book->id)->get()->isNotEmpty();
     }
 
 }

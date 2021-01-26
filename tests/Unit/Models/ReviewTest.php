@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Models;
 
-use Mockery;
 use App\Models\User;
 use App\Models\Book;
 use App\Models\Review;
@@ -14,7 +13,7 @@ class ReviewTest extends ModelTestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->model = Mockery::mock(Review::class .'[hasReview]');
+        $this->model = new Review();
     }
 
     public function tearDown(): void
@@ -43,19 +42,6 @@ class ReviewTest extends ModelTestCase
         $this->model->rating = 4;
 
         $this->assertSame('<span class="text-danger">★★★★</span>', $this->model->rating_text);
-    }
-
-    public function test_model_can_check_user_has_been_reviewed_a_book()
-    {
-        $user = new User();
-        $book = new Book();
-
-        $this->model->shouldReceive('hasReview')
-                    ->once()
-                    ->with($user, $book)
-                    ->andReturn(false);
-
-        $this->assertFalse($this->model::hasReview($user, $book));
     }
 
 }
