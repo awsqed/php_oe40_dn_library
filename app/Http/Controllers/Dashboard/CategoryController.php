@@ -2,88 +2,69 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\Category;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
+use App\Repositories\Interfaces\CategoryRepositoryInterface;
 
 class CategoryController extends Controller
 {
+
+    public function __construct(CategoryRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
 
     public function index()
     {
         $this->authorize('read-category');
 
-        return view('dashboard.categories.index', [
-            'categories' => Category::paginate(config('app.num-rows')),
-        ]);
+        $categories = $this->repository->paginate();
+
+        return view('dashboard.categories.index', compact('categories'));
     }
 
     public function create()
     {
         $this->authorize('create-category');
 
-        return view('dashboard.categories.create', [
-            'categories' => Category::where('id', '<>', config('app.fallback-category'))->get(),
-        ]);
+        $categories = $this->repository->allWithoutFallback();
+
+        return view('dashboard.categories.create', compact('categories'));
     }
 
     public function store(CategoryRequest $request)
     {
-        $category = Category::create([
+        $this->repository->create([
             'name' => $request->name,
             'parent_id' => $request->parent ?: null,
             'description' => $request->description,
         ]);
 
-        return back()->with('success', trans('categories.messages.category-created'));
+        return redirect()->route('categories.index')->with('success', trans('categories.messages.category-created'));
     }
 
-    public function edit(Category $category)
+    public function edit($categoryId)
     {
         $this->authorize('update-category');
 
-        $fallbackCategory = config('app.fallback-category');
-        $invalidCategories = [
-            $fallbackCategory,
-            $category->id,
-        ];
-        foreach ($category->childs as $child) {
-            $invalidCategories[] = $child->id;
-        }
+        $category = $this->repository->find($categoryId);
+        $categories = $this->repository->getValidParents($categoryId);
 
-        if ($category->id == $fallbackCategory) {
-            return view('dashboard.categories.edit', [
-                'category' => $category
-            ]);
-        }
-
-        return view('dashboard.categories.edit', [
-            'category' => $category,
-            'categories' => Category::whereNotIn('id', $invalidCategories)->get(),
-        ]);
+        return view('dashboard.categories.edit', compact('category', 'categories'));
     }
 
-    public function update(CategoryRequest $request, Category $category)
+    public function update(CategoryRequest $request, $categoryId)
     {
-        $category->name = $request->name;
-        $category->description = $request->description;
+        $this->repository->updateCategory($categoryId, $request);
 
-        $category->parent()->associate(Category::find($request->parent));
-
-        $category->push();
-
-        return back()->with('success', trans('categories.messages.category-edited'));
+        return redirect()->route('categories.index')->with('success', trans('categories.messages.category-edited'));
     }
 
-    public function destroy(Category $category)
+    public function destroy($categoryId)
     {
         $this->authorize('delete-category');
 
-        if ($category->id == config('app.fallback-category')) {
-            abort(403, trans('general.messages.delete-fallback-category'));
-        }
-
-        $category->delete();
+        $this->repository->deleteCategory($categoryId);
 
         return back();
     }

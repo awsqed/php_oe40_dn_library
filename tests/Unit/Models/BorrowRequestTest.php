@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Models;
 
-use Mockery;
 use App\Models\User;
 use App\Models\Book;
 use Tests\ModelTestCase;
@@ -16,7 +15,7 @@ class BorrowRequestTest extends ModelTestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->model = Mockery::mock(BorrowRequest::class .'[getLatestProcessing,getCurrentBorrowing]');
+        $this->model = new BorrowRequest();
     }
 
     public function tearDown(): void
@@ -134,37 +133,6 @@ class BorrowRequestTest extends ModelTestCase
     public function test_model_has_default_sort_scope()
     {
         $this->assertInstanceOf(Builder::class, BorrowRequest::defaultSort());
-    }
-
-    public function test_model_has_search_scope()
-    {
-        $this->assertInstanceOf(Builder::class, BorrowRequest::search('foobar'));
-    }
-
-    public function test_model_can_get_latest_processing_request()
-    {
-        $user = new User();
-        $book = new Book();
-
-        $this->model->shouldReceive('getLatestProcessing')
-                    ->once()
-                    ->with($user, $book)
-                    ->andReturn(null);
-
-        $this->assertNull($this->model::getLatestProcessing($user, $book));
-    }
-
-    public function test_model_can_get_current_borrowing_request()
-    {
-        $user = new User();
-        $book = new Book();
-
-        $this->model->shouldReceive('getCurrentBorrowing')
-                    ->once()
-                    ->with($user, $book)
-                    ->andReturn(null);
-
-        $this->assertNull($this->model::getCurrentBorrowing($user, $book));
     }
 
 }

@@ -42,6 +42,27 @@ class Category extends Model
         return $this->childs()->with('allChilds');
     }
 
+    public function childArray($model = null)
+    {
+        if ($model == null) {
+            $model = $this;
+        }
+
+        $result = [];
+
+        if ($model !== $this) {
+            array_push($result, $model->id);
+        }
+
+        if ($model->allChilds->isNotEmpty()) {
+            foreach ($model->allChilds as $value) {
+                $result = array_merge($result, $this->childArray($value));
+            }
+        }
+
+        return $result;
+    }
+
     public function books()
     {
         return $this->hasMany(Book::class);

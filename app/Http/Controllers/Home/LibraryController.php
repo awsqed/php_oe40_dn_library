@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Home;
 
-use App\Models\User;
 use App\Models\Book;
 use App\Models\Like;
 use App\Models\Follow;
 use App\Models\Review;
-use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\RateRequest;
 use App\Http\Controllers\Controller;
@@ -17,12 +15,17 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
+use App\Repositories\Interfaces\CategoryRepositoryInterface;
+use App\Repositories\Interfaces\BorrowRequestRepositoryInterface;
 
 class LibraryController extends Controller
 {
 
-    public function __construct(AuthorRepositoryInterface $authorRepo)
-    {
+    public function __construct(
+        AuthorRepositoryInterface $authorRepo,
+        CategoryRepositoryInterface $categoryRepo,
+        BorrowRequestRepositoryInterface $borrowsRepo
+    ) {
         $this->middleware('auth')->except([
             'index',
             'viewBook',
@@ -30,6 +33,8 @@ class LibraryController extends Controller
         ]);
 
         $this->authorRepo = $authorRepo;
+        $this->categoryRepo = $categoryRepo;
+        $this->borrowsRepo = $borrowsRepo;
     }
 
     public function index(Request $request)
@@ -38,10 +43,11 @@ class LibraryController extends Controller
 
         if ($request->filled('category')) {
             try {
-                $category = Category::findOrFail($request->category);
-                $subCategories = $category->allChilds;
+                $category = $this->categoryRepo->find($request->category);
+                $subCategories = $category->childArray();
+                $subCategories[] = $category->id;
 
-                $books->whereIn('category_id', $subCategories->push($category)->pluck('id')->toArray());
+                $books->whereIn('category_id', $subCategories);
             } catch (ModelNotFoundException $e) {
                 return redirect()->route('library.index');
             }
@@ -63,7 +69,7 @@ class LibraryController extends Controller
         }
 
         return view('home.library.index', [
-            'categories' => Category::doesntHave('parent')->with('childs')->get(),
+            'categories' => $this->categoryRepo->getRootCategories(),
             'books' => $books->paginate(config('app.num-rows'))->withQueryString(),
         ]);
     }
@@ -78,19 +84,16 @@ class LibraryController extends Controller
 
     public function borrowBook(BorrowFormRequest $request, Book $book)
     {
-        Auth::user()->bookBorrowRequests()->attach($book, [
-            'from' => $request->from,
-            'to' => $request->to,
-        ]);
+        $this->borrowsRepo->createBorrowRequest(Auth::id(), $book->id, $request->from, $request->to);
 
         return back();
     }
 
     public function borrowHistory()
     {
-        return view('home.library.borrow-history', [
-            'history' => Auth::user()->bookBorrowRequests()->latest('pivot_created_at', 'from', 'to')->paginate(config('app.num-rows')),
-        ]);
+        $history = $this->borrowsRepo->ofUser(Auth::id());
+
+        return view('home.library.borrow-history', compact('history'));
     }
 
     public function toggleLike(Book $book)
