@@ -1,4 +1,4 @@
-<x-dashboard :title="Breadcrumbs::current()->title">
+<x-dashboard :title="trans('publishers.editing') .': '. $publisher->name">
     <x-slot name="breadcrumbs">
         {{ Breadcrumbs::render('publishers.edit', $publisher) }}
     </x-slot>

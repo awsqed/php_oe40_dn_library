@@ -23,7 +23,7 @@
     <td class="align-middle">{{ $record->user->fullname }}</td>
     <td class="align-middle">
         <a href="{{ route('library.book', $record->book) }}" class="text-reset text-decoration-none">
-            {{ Str::title($record->book->title) }}
+            {{ $record->book->title }}
         </a>
     </td>
     <td class="align-middle">{{ $record->from }}</td>

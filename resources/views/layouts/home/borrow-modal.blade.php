@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    <i>{{ Str::title($book->title) }}</i>
+                    <i>{{ $book->title }}</i>
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -16,7 +16,7 @@
 
                     <div class="form-group text-left">
                         <label for="input-title">{{ trans('books.title') }}</label>
-                        <input type="text" class="form-control-plaintext" id="input-title" value="{{ Str::title($book->title) }}">
+                        <input type="text" class="form-control-plaintext" id="input-title" value="{{ $book->title }}">
                     </div>
 
                     <div class="form-group text-left">

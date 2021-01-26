@@ -5,7 +5,7 @@
                 <a href="{{ route('library.book', $like->book) }}">
                     <img src="{{ $like->book->cover }}" class="figure-img img-fluid img-thumbnail book-cover">
                     <figcaption class="figure-caption text-center">
-                        {{ Str::title($like->book->title) }}
+                        {{ $like->book->title }}
                     </figcaption>
                 </a>
             </figure>
@@ -20,7 +20,7 @@
                 <a href="{{ route('library.profile', $follow->user) }}">
                     <img src="{{ $follow->user->avatar }}" class="figure-img img-fluid img-thumbnail" width="128" height="128">
                     <figcaption class="figure-caption">
-                        {{ Str::title(trim($follow->user->fullname)) ?: $follow->user->username }}
+                        {{ $follow->user->fullname }}
                     </figcaption>
                 </a>
             </figure>
@@ -58,25 +58,25 @@
     <ul class="list-unstyled mb-0">
         @foreach ($reviews as $review)
             <li class="media mb-2 border p-3 bg-light">
-                <img src="{{ $review->cover }}" class="img-thumbnail book-cover align-self-start mr-3">
+                <img src="{{ $review->book->cover }}" class="img-thumbnail book-cover align-self-start mr-3">
                 <div class="media-body">
                     <h5 class="mt-0">
                         <div class="float-left">
-                            <a href="{{ route('library.book', $review) }}" class="h4 font-weight-bold text-reset text-decoration-none">
-                                {{ Str::title($review->title) }}
+                            <a href="{{ route('library.book', $review->book) }}" class="h4 font-weight-bold text-reset text-decoration-none">
+                                {{ $review->book->title }}
                             </a>
                             <br />
-                            <a href="{{ route('library.author', $review->author) }}" class="text-reset text-decoration-none text-uppercase">
-                                <small>{{ $review->author->fullname }}</small>
+                            <a href="{{ route('library.author', $review->book->author) }}" class="text-reset text-decoration-none text-uppercase">
+                                <small>{{ $review->book->author->fullname }}</small>
                             </a>
                             <br />
-                            <small>{!! $review->pivot->rating_text !!}</small>
+                            <small>{!! $review->rating_text !!}</small>
                         </div>
-                        <small class="float-right text-muted">{{ $review->pivot->reviewed_at }}</small>
+                        <small class="float-right text-muted">{{ $review->reviewed_at }}</small>
 
                         <div class="clearfix"></div>
                     </h5>
-                    <p class="text-justify">{!! nl2br(e($review->pivot->comment)) !!}</p>
+                    <p class="text-justify">{!! nl2br(e($review->comment)) !!}</p>
                 </div>
             </li>
         @endforeach

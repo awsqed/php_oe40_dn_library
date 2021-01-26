@@ -1,6 +1,6 @@
-<x-app :title="Str::title($book->title)">
+<x-app :title="$book->title">
     @php
-        $user = Auth::user();
+        $currentUserId = Auth::id();
 
         $reviewCount = $reviews->total();
         $likeCount = $book->likes->count();
@@ -29,7 +29,8 @@
                     </div>
                     <div class="align-self-stretch px-3 mt-2 fl-button">
                         @include('layouts.home.follow-button', [
-                            'followable' => $book,
+                            'followableType' => 'book',
+                            'followableId' => $book->id,
                             'btnClasses' => 'btn-lg btn-block',
                         ])
                     </div>
@@ -39,11 +40,11 @@
             <div class="flex-fill">
                 <h2 class="font-weight-bold">
                     <a href="{{ route('library.book', $book) }}" class="text-reset text-decoration-none">
-                        {{ Str::title($book->title) }}
+                        {{ $book->title }}
                     </a>
                     <br/>
                     <a href="{{ route('library.author', $book->author) }}" class="text-reset text-decoration-none">
-                        <small>{{ Str::title($book->author->fullname) }}</small>
+                        <small>{{ $book->author->fullname }}</small>
                     </a>
                 </h2>
                 <ul class="list-group list-group-horizontal">
@@ -89,7 +90,10 @@
                     {{ trans('library.guest.review-message') }}
                 </div>
             @else
-                @if (!App\Models\Review::hasReview($user, $book))
+                @php
+                    $repository = App::make(App\Repositories\Interfaces\ReviewRepositoryInterface::class);
+                @endphp
+                @if (!$repository->check($currentUserId, $book->id))
                     <div class="review-form">
                         <div class="form-group">
                             <label for="input-rating" class="h5">{{ trans('library.rating') }}</label>

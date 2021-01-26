@@ -1,9 +1,13 @@
 @auth
-    @if (App\Models\BorrowRequest::getLatestProcessing($user, $book))
+    @php
+        $repository = App::make(App\Repositories\Interfaces\BorrowRequestRepositoryInterface::class);
+    @endphp
+
+    @if ($repository->getLatestProcessing($currentUserId, $book->id))
         <a href="{{ route('library.borrow.history') }}" class="text-uppercase text-primary font-weight-bold">
             {{ trans('library.borrow.under-process') }}
         </a>
-    @elseif ($borrowRequest = App\Models\BorrowRequest::getCurrentBorrowing($user, $book))
+    @elseif ($borrowRequest = $repository->getCurrentBorrowing($currentUserId, $book->id))
         <table class="table text-center text-uppercase">
             <tr class="font-weight-bold">
                 <td colspan="2">

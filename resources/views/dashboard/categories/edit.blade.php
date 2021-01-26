@@ -1,4 +1,4 @@
-<x-dashboard :title="Breadcrumbs::current()->title">
+<x-dashboard :title="trans('categories.editing') .': '. $category->name">
     <x-slot name="breadcrumbs">
         {{ Breadcrumbs::render('categories.edit', $category) }}
     </x-slot>

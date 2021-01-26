@@ -17,11 +17,11 @@
                             <p class="card-text">
                                 <p class="text-muted">
                                     <a href="{{ route('library.author', $book->author) }}" class="text-reset text-decoration-none">
-                                        {{ Str::title($book->author->fullname) }}
+                                        {{ $book->author->fullname }}
                                     </a>
                                 </p>
                                 <a href="{{ route('library.book', $book) }}" class="h5 font-weight-bold text-reset text-decoration-none">
-                                    {{ Str::title($book->title) }}
+                                    {{ $book->title }}
                                 </a>
                             </p>
                         </div>
@@ -42,7 +42,7 @@
                     <div class="card text-center">
                         <div class="card-body">
                             <p class="card-text text-uppercase font-weight-bold">
-                                {{ Str::title($author->fullname) }}
+                                {{ $author->fullname }}
                             </p>
                         </div>
                         <img src="{{ $author->avatar }}" class="card-img-bottom" alt="Title">
