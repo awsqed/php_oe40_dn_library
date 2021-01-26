@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Home;
 use App\Models\User;
 use App\Models\Book;
 use App\Models\Like;
-use App\Models\Author;
 use App\Models\Follow;
 use App\Models\Review;
 use App\Models\Category;
@@ -17,16 +16,20 @@ use App\Http\Requests\BorrowFormRequest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Repositories\Interfaces\AuthorRepositoryInterface;
 
 class LibraryController extends Controller
 {
 
-    public function __construct()
+    public function __construct(AuthorRepositoryInterface $authorRepo)
     {
         $this->middleware('auth')->except([
             'index',
             'viewBook',
+            'viewAuthor',
         ]);
+
+        $this->authorRepo = $authorRepo;
     }
 
     public function index(Request $request)
@@ -164,13 +167,13 @@ class LibraryController extends Controller
         ]);
     }
 
-    public function viewAuthor(Author $author)
+    public function viewAuthor($authorId)
     {
-        return view('home.library.author', [
-            'author' => $author,
-            'follows' => $author->followers()->with('user', 'user.image')->latest('followed_at')->paginate(config('app.num-followers')),
-            'books' => $author->books()->with('image', 'reviews')->paginate(config('app.num-rows')),
-        ]);
+        $author = $this->authorRepo->find($authorId);
+        $follows = $author->followers()->with('user', 'user.image')->latest('followed_at')->paginate(config('app.num-followers'));
+        $books = $author->books()->with('image', 'reviews')->paginate(config('app.num-rows'));
+
+        return view('home.library.author', compact('author', 'follows', 'books'));
     }
 
     public function viewProfile(User $user)

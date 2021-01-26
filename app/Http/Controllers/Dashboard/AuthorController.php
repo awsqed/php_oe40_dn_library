@@ -2,21 +2,25 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\Author;
 use App\Http\Requests\AuthorRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
+use App\Repositories\Interfaces\AuthorRepositoryInterface;
 
 class AuthorController extends Controller
 {
+
+    public function __construct(AuthorRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
 
     public function index()
     {
         $this->authorize('read-author');
 
-        return view('dashboard.authors.index', [
-            'authors' => Author::paginate(config('app.num-rows')),
-        ]);
+        $authors = $this->repository->paginate();
+
+        return view('dashboard.authors.index', compact('authors'));
     }
 
     public function create()
@@ -28,66 +32,36 @@ class AuthorController extends Controller
 
     public function store(AuthorRequest $request)
     {
-        $author = Author::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'gender' => $request->gender,
-            'date_of_birth' => $request->birthday,
-        ]);
+        $this->repository->createAuthor($request);
 
-        $imagePath = $request->has('image')
-                        ? $request->file('image')->store('images/authors', 'public')
-                        : config('app.default-image.author');
-        $author->image()->create([
-            'path' => $imagePath,
-        ]);
-
-        return back()->with('success', trans('authors.messages.author-created'));
+        return redirect()
+                ->route('authors.index')
+                ->with('success', trans('authors.messages.author-created'));
     }
 
-    public function edit(Author $author)
+    public function edit($authorId)
     {
         $this->authorize('update-author');
 
-        return view('dashboard.authors.edit', [
-            'author' => $author,
-        ]);
+        $author = $this->repository->find($authorId);
+
+        return view('dashboard.authors.edit', compact('author'));
     }
 
-    public function update(AuthorRequest $request, Author $author)
+    public function update(AuthorRequest $request, $authorId)
     {
-        $author->first_name = $request->first_name;
-        $author->last_name = $request->last_name;
-        $author->gender = $request->gender;
-        $author->date_of_birth = $request->birthday;
-        $author->save();
+        $this->repository->updateAuthor($authorId, $request);
 
-        $imagePath = $request->has('image')
-                        ? $request->file('image')->store('images/authors', 'public')
-                        : config('app.default-image.author');
-
-        $image = $author->image();
-        if ($author->image) {
-            if ($imagePath != config('app.default-image.author')) {
-                $image->update([
-                    'path' => $imagePath,
-                ]);
-            }
-        } else {
-            $image->create([
-                'path' => $imagePath,
-            ]);
-        }
-        Cache::forget("author-{$author->id}-avatar");
-
-        return back()->with('success', trans('authors.messages.author-edited'));
+        return redirect()
+                ->route('authors.index')
+                ->with('success', trans('authors.messages.author-edited'));
     }
 
-    public function destroy(Author $author)
+    public function destroy($authorId)
     {
         $this->authorize('delete-author');
 
-        $author->delete();
+        $this->repository->delete($authorId);
 
         return back();
     }

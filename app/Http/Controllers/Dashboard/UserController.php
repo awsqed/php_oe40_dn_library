@@ -41,7 +41,9 @@ class UserController extends Controller
     {
         $this->userRepo->createUser($request);
 
-        return redirect()->route('users.index');
+        return redirect()
+                ->route('users.index')
+                ->with('success', trans('users.messages.user-created'));
     }
 
     public function edit($userId)
@@ -58,7 +60,9 @@ class UserController extends Controller
     {
         $this->userRepo->updateUser($userId, $request);
 
-        return redirect()->route('users.index');
+        return redirect()
+                ->route('users.index')
+                ->with('success', trans('users.messages.user-edited'));
     }
 
     public function destroy($userId)
