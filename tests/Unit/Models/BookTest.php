@@ -97,16 +97,24 @@ class BookTest extends ModelTestCase
 
     public function test_book_has_default_cover()
     {
-        $this->assertSame(asset('storage/'. config('app.default-image.book')), $this->model->cover);
+        $default = asset('storage/'. config('app.default-image.book'));
+
+        $cacheKey = get_class($this->model) .'.'. $this->model->id;
+        Cache::shouldReceive('remember')
+                ->once()
+                ->with($cacheKey, config('app.cache-time'), Closure::class)
+                ->andReturn($default);
+        $this->assertSame($default, $this->model->cover);
     }
 
     public function test_book_cover_is_cached()
     {
         $default = asset('storage/'. config('app.default-image.book'));
 
+        $cacheKey = get_class($this->model) .'.'. $this->model->id;
         Cache::shouldReceive('remember')
                 ->once()
-                ->with("book-{$this->model->id}-cover", config('app.cache-time'), Closure::class)
+                ->with($cacheKey, config('app.cache-time'), Closure::class)
                 ->andReturn($default);
         $this->assertSame($default, $this->model->cover);
     }

@@ -2,30 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\Cache;
+use App\Traits\HasImage;
 use Illuminate\Database\Eloquent\Model;
 
 class Publisher extends Model
 {
+    use HasImage;
 
     public $timestamps = false;
 
     protected $guarded = [];
 
-    public function image()
-    {
-        return $this->morphOne(Image::class, 'imageable');
-    }
-
     public function getLogoAttribute()
     {
-        $model = $this;
-        return Cache::remember("publisher-{$model->id}-logo", config('app.cache-time'), function () use ($model) {
-            $imagePath = optional($model->image)->path ?? '';
-            return !empty($imagePath)
-                    ? asset("storage/{$imagePath}")
-                    : asset('storage/'. config('app.default-image.publisher'));
-        });
+        return $this->image;
     }
 
     public function books()

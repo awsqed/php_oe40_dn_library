@@ -2,28 +2,19 @@
 
 namespace App\Models;
 
+use App\Traits\HasImage;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
 {
+    use HasImage;
 
     protected $guarded = [];
 
-    public function image()
-    {
-        return $this->morphOne(Image::class, 'imageable');
-    }
-
     public function getCoverAttribute()
     {
-        $model = $this;
-        return Cache::remember("book-{$model->id}-cover", config('app.cache-time'), function () use ($model) {
-            $imagePath = optional($model->image)->path ?? '';
-            return !empty($imagePath)
-                    ? asset("storage/{$imagePath}")
-                    : asset('storage/'. config('app.default-image.book'));
-        });
+        return $this->image;
     }
 
     public function author()
