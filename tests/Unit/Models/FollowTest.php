@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Models;
 
-use Mockery;
 use App\Models\User;
 use App\Models\Book;
 use App\Models\Author;
@@ -15,7 +14,7 @@ class FollowTest extends ModelTestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->model = Mockery::mock(Follow::class .'[of,check]');
+        $this->model = new Follow();
     }
 
     public function tearDown(): void
@@ -61,32 +60,6 @@ class FollowTest extends ModelTestCase
     public function test_follow_belongs_to_an_user()
     {
         $this->assertBelongsTo('user', User::class, 'user_id');
-    }
-
-    public function test_model_can_get_follow_by_user_and_book()
-    {
-        $user = new User();
-        $book = new Book();
-
-        $this->model->shouldReceive('of')
-                    ->once()
-                    ->with($user, $book)
-                    ->andReturn(null);
-
-        $this->assertNull($this->model::of($user, $book));
-    }
-
-    public function test_model_can_check_follow_status_of_a_book()
-    {
-        $user = new User();
-        $book = new Book();
-
-        $this->model->shouldReceive('check')
-                    ->once()
-                    ->with($user, $book)
-                    ->andReturn(false);
-
-        $this->assertFalse($this->model::check($user, $book));
     }
 
 }
