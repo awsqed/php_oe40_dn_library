@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Support\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class BorrowRequest extends Pivot
@@ -68,73 +67,6 @@ class BorrowRequest extends Pivot
     public function scopeDefaultSort($query)
     {
         return $query->latest('created_at', 'from', 'to', 'returned_at');
-    }
-
-    public function scopeSearch($query, $search, $filter = null)
-    {
-        $configKey = 'app.borrow-request.status-code';
-
-        if (!isset($filter) || $filter === '') {
-            $filter = config("{$configKey}.new");
-        }
-        switch ($filter) {
-            case 'all':
-                break;
-
-            case config("{$configKey}.accepted"):
-            case config("{$configKey}.rejected"):
-            case config("{$configKey}.returned"):
-            case config("{$configKey}.returned-late"):
-                $query->where('status', $filter);
-                break;
-
-            case config("{$configKey}.new"):
-                $query->where('status', null);
-                break;
-
-            case config("{$configKey}.overdue"):
-                $query->where('status', config("{$configKey}.accepted"))
-                    ->where('returned_at', null)
-                    ->where('to', '<', date('Y-m-d'));
-                break;
-        }
-
-        if (!empty($search)) {
-            $search = '%'. str_replace(' ', '%', $search ?: '') .'%';
-            $query->where(function ($query) use ($search) {
-                $query->whereHas('user', function (Builder $query) use ($search) {
-                    $query->whereRaw('LOWER(first_name) like ?', "{$search}")
-                            ->orWhereRaw('LOWER(last_name) like ?', "{$search}");
-                })->orWhereHas('book', function (Builder $query) use ($search) {
-                    $query->whereRaw('LOWER(title) like ?', "{$search}");
-                });
-            });
-        }
-
-        return $query;
-    }
-
-    static public function getLatestProcessing(User $user, Book $book)
-    {
-        $borrowRequest = $user->bookBorrowRequests()
-                                ->where('book_id', $book->id)
-                                ->where('status', null)
-                                ->latest()
-                                ->first();
-
-        return optional($borrowRequest)->pivot;
-    }
-
-    static public function getCurrentBorrowing(User $user, Book $book)
-    {
-        $borrowRequest = $user->bookBorrowRequests()
-                                ->where('book_id', $book->id)
-                                ->where('status', config('app.borrow-request.status-code.accepted'))
-                                ->where('returned_at', null)
-                                ->latest()
-                                ->first();
-
-        return optional($borrowRequest)->pivot;
     }
 
 }

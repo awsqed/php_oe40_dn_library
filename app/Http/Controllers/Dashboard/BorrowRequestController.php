@@ -3,19 +3,24 @@
 namespace App\Http\Controllers\Dashboard;
 
 use Illuminate\Http\Request;
-use App\Models\BorrowRequest;
-use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
+use App\Repositories\Interfaces\BorrowRequestRepositoryInterface;
 
 class BorrowRequestController extends Controller
 {
+
+    public function __construct(BorrowRequestRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
 
     public function index(Request $request)
     {
         $this->authorize('read-borrow-request');
 
-        $filter = $request->filter ?? '';
+        $borrowRequests = $this->repository->search($request->search, $request->filter);
 
+        $filter = $request->filter ?? '';
         $statusCode = [];
         $selection = [];
         foreach (config('app.borrow-request.status-code') as $key => $value) {
@@ -27,46 +32,17 @@ class BorrowRequestController extends Controller
             }
         }
 
-        return view('dashboard.borrows.index', [
-            'borrowRequests' => BorrowRequest::with('user', 'book')
-                                ->search($request->search, $request->filter)->defaultSort()
-                                ->paginate(config('app.num-rows'))->withQueryString(),
-            'statusCode' => $statusCode,
-            'selection' => $selection,
-        ]);
+        return view('dashboard.borrows.index', compact('borrowRequests', 'statusCode', 'selection'));
     }
 
-    public function update(Request $request, BorrowRequest $borrowRequest, $action)
+    public function update(Request $request, $borrowRequestId, $action)
     {
         $this->authorize('update-borrow-request');
 
-        switch ($action) {
-            case 'accept':
-                $statusCode = config('app.borrow-request.status-code.accepted');
-                $borrowRequest->processed_at = now();
-                break;
-            case 'reject':
-                $statusCode = config('app.borrow-request.status-code.rejected');
-                $borrowRequest->processed_at = now();
-                break;
-            case 'return':
-                $statusCode = date('Y-m-d') > $borrowRequest->to
-                                ? config('app.borrow-request.status-code.returned-late')
-                                : config('app.borrow-request.status-code.returned');
-                $borrowRequest->returned_at = now();
-                break;
-            default:
-                return;
-        }
+        $this->repository->updateBorrowRequest($borrowRequestId, $action);
+        $borrowRequests = $this->repository->search($request->search, $request->filter);
 
-        $borrowRequest->status = $statusCode;
-        $borrowRequest->save();
-
-        return view('layouts.dashboard.borrow-requests-table', [
-            'borrowRequests' => BorrowRequest::with('user', 'book')
-                                ->search($request->search, $request->filter)->defaultSort()
-                                ->paginate(config('app.num-rows'))->withQueryString(),
-        ])->render();
+        return view('layouts.dashboard.borrow-requests-table', compact('borrowRequests'))->render();
     }
 
 }
