@@ -21,7 +21,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     {
         $perPage = $perPage ?? config('app.num-rows');
 
-        return $this->model->latest()->paginate($perPage, $columns);
+        return $this->model->latest('updated_at')->paginate($perPage, $columns);
     }
 
     public function createUser($request)
@@ -29,7 +29,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $user = $this->create([
             'username' => $request->username,
             'email' => $request->email,
-            'password' => Hash::make($request->username),
+            'password' => Hash::make($request->password ?: $request->username),
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'gender' => $request->gender,
@@ -38,16 +38,15 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
             'address' => $request->address,
         ]);
 
-        $imagePath = $request->has('image')
+        $user->image = $request->has('image')
                         ? $request->file('image')->store('images/users', 'public')
                         : config('app.default-image.user');
-        $user->image()->create([
-            'path' => $imagePath,
-        ]);
 
         if (Gate::allows('update-user-permission')) {
             $user->permissions()->attach($request->permissions);
         }
+
+        return $user;
     }
 
     public function updateUser($userId, $request)
@@ -65,28 +64,13 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         if ($request->filled('password')) {
             $attributes['password'] = Hash::make($request->password);
         }
-
-        $imagePath = $request->has('image')
-                        ? $request->file('image')->store('images/users', 'public')
-                        : config('app.default-image.user');
-
         $this->update($userId, $attributes);
 
         $user = $this->find($userId);
 
-        $image = $user->image();
-        if ($user->image) {
-            if ($imagePath != config('app.default-image.user')) {
-                $image->update([
-                    'path' => $imagePath,
-                ]);
-            }
-        } else {
-            $image->create([
-                'path' => $imagePath,
-            ]);
-        }
-        Cache::forget("{$user->id}-avatar");
+        $user->image = $request->has('image')
+                        ? $request->file('image')->store('images/users', 'public')
+                        : config('app.default-image.user');
 
         if (Gate::allows('update-user-permission')) {
             $user->permissions()->sync($request->permissions);

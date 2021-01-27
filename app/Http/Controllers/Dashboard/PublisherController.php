@@ -2,21 +2,25 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\Publisher;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\PublisherRequest;
+use App\Repositories\Interfaces\PublisherRepositoryInterface;
 
 class PublisherController extends Controller
 {
+
+    public function __construct(PublisherRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
 
     public function index()
     {
         $this->authorize('read-publisher');
 
-        return view('dashboard.publishers.index', [
-            'publishers' => Publisher::paginate(config('app.num-rows')),
-        ]);
+        $publishers = $this->repository->paginate();
+
+        return view('dashboard.publishers.index', compact('publishers'));
     }
 
     public function create()
@@ -28,62 +32,36 @@ class PublisherController extends Controller
 
     public function store(PublisherRequest $request)
     {
-        $publisher = Publisher::create([
-            'name' => $request->name,
-            'description' => $request->description,
-        ]);
+        $this->repository->createPublisher($request);
 
-        $imagePath = $request->has('image')
-                        ? $request->file('image')->store('images/publishers', 'public')
-                        : config('app.default-image.publisher');
-        $publisher->image()->create([
-            'path' => $imagePath,
-        ]);
-
-        return back()->with('success', trans('publishers.messages.publisher-created'));
+        return redirect()
+                ->route('publishers.index')
+                ->with('success', trans('publishers.messages.publisher-created'));
     }
 
-    public function edit(Publisher $publisher)
+    public function edit($publisherId)
     {
         $this->authorize('update-publisher');
 
-        return view('dashboard.publishers.edit', [
-            'publisher' => $publisher,
-        ]);
+        $publisher = $this->repository->find($publisherId);
+
+        return view('dashboard.publishers.edit', compact('publisher'));
     }
 
-    public function update(PublisherRequest $request, Publisher $publisher)
+    public function update(PublisherRequest $request, $publisherId)
     {
-        $publisher->name = $request->name;
-        $publisher->description = $request->description;
-        $publisher->save();
+        $this->repository->updatePublisher($publisherId, $request);
 
-        $imagePath = $request->has('image')
-                        ? $request->file('image')->store('images/publishers', 'public')
-                        : config('app.default-image.publisher');
-
-        $image = $publisher->image();
-        if ($publisher->image) {
-            if ($imagePath != config('app.default-image.publisher')) {
-                $image->update([
-                    'path' => $imagePath,
-                ]);
-            }
-        } else {
-            $image->create([
-                'path' => $imagePath,
-            ]);
-        }
-        Cache::forget("publisher-{$publisher->id}-logo");
-
-        return back()->with('success', trans('publishers.messages.publisher-edited'));
+        return redirect()
+                ->route('publishers.index')
+                ->with('success', trans('publishers.messages.publisher-edited'));
     }
 
-    public function destroy(Publisher $publisher)
+    public function destroy($publisherId)
     {
         $this->authorize('delete-publisher');
 
-        $publisher->delete();
+        $this->repository->delete($publisherId);
 
         return back();
     }

@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\User;
 use App\Http\Requests\UserRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\Interfaces\UserRepositoryInterface;
 
 class RegisterController extends Controller
 {
 
-    public function __construct()
+    public function __construct(UserRepositoryInterface $repository)
     {
         $this->middleware('guest');
+        $this->repository = $repository;
     }
 
     public function showRegistrationForm()
@@ -23,11 +23,7 @@ class RegisterController extends Controller
 
     public function register(UserRequest $request)
     {
-        $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        $user = $this->repository->createUser($request);
         Auth::guard()->login($user);
 
         return $request->wantsJson()
