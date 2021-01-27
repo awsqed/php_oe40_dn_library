@@ -46,16 +46,24 @@ class PublisherTest extends ModelTestCase
 
     public function test_publisher_has_default_logo()
     {
-        $this->assertSame(asset('storage/'. config('app.default-image.publisher')), $this->model->logo);
+        $default = asset('storage/'. config('app.default-image.publisher'));
+
+        $cacheKey = get_class($this->model) .'.'. $this->model->id;
+        Cache::shouldReceive('remember')
+                ->once()
+                ->with($cacheKey, config('app.cache-time'), Closure::class)
+                ->andReturn($default);
+        $this->assertSame($default, $this->model->logo);
     }
 
     public function test_publisher_logo_is_cached()
     {
         $default = asset('storage/'. config('app.default-image.publisher'));
 
+        $cacheKey = get_class($this->model) .'.'. $this->model->id;
         Cache::shouldReceive('remember')
                 ->once()
-                ->with("publisher-{$this->model->id}-logo", config('app.cache-time'), Closure::class)
+                ->with($cacheKey, config('app.cache-time'), Closure::class)
                 ->andReturn($default);
         $this->assertSame($default, $this->model->logo);
     }

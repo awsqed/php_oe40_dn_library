@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\HasImage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasImage;
 
     protected $guarded = [];
 
@@ -37,20 +37,9 @@ class User extends Authenticatable
         });
     }
 
-    public function image()
-    {
-        return $this->morphOne(Image::class, 'imageable');
-    }
-
     public function getAvatarAttribute()
     {
-        $model = $this;
-        return Cache::remember("{$model->id}-avatar", config('app.cache-time'), function () use ($model) {
-            $imagePath = optional($model->image)->path ?? '';
-            return !empty($imagePath)
-                    ? asset("storage/{$imagePath}")
-                    : asset('storage/'. config('app.default-image.user'));
-        });
+        return $this->image;
     }
 
     public function permissions()

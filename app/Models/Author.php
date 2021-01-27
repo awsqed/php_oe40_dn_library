@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasImage;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 
 class Author extends Model
 {
+    use HasImage;
 
     public $timestamps = false;
 
@@ -25,20 +26,9 @@ class Author extends Model
         });
     }
 
-    public function image()
-    {
-        return $this->morphOne(Image::class, 'imageable');
-    }
-
     public function getAvatarAttribute()
     {
-        $model = $this;
-        return Cache::remember("author-{$model->id}-avatar", config('app.cache-time'), function () use ($model) {
-            $imagePath = optional($model->image)->path ?? '';
-            return !empty($imagePath)
-                    ? asset("storage/{$imagePath}")
-                    : asset('storage/'. config('app.default-image.author'));
-        });
+        return $this->image;
     }
 
     public function books()

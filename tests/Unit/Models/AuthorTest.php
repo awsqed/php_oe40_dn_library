@@ -52,16 +52,24 @@ class AuthorTest extends ModelTestCase
 
     public function test_author_has_default_avatar()
     {
-        $this->assertSame(asset('storage/'. config('app.default-image.author')), $this->model->avatar);
+        $default = asset('storage/'. config('app.default-image.author'));
+
+        $cacheKey = get_class($this->model) .'.'. $this->model->id;
+        Cache::shouldReceive('remember')
+                ->once()
+                ->with($cacheKey, config('app.cache-time'), Closure::class)
+                ->andReturn($default);
+        $this->assertSame($default, $this->model->avatar);
     }
 
     public function test_author_avatar_is_cached()
     {
         $default = asset('storage/'. config('app.default-image.author'));
 
+        $cacheKey = get_class($this->model) .'.'. $this->model->id;
         Cache::shouldReceive('remember')
                 ->once()
-                ->with("author-{$this->model->id}-avatar", config('app.cache-time'), Closure::class)
+                ->with($cacheKey, config('app.cache-time'), Closure::class)
                 ->andReturn($default);
         $this->assertSame($default, $this->model->avatar);
     }
