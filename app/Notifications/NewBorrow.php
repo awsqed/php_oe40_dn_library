@@ -9,7 +9,8 @@ class NewBorrow extends Notification
 
     public function __construct($borrowRequest)
     {
-        $this->borrowRequest = $borrowRequest;
+        $this->user = $borrowRequest->user;
+        $this->book = $borrowRequest->book;
     }
 
     public function via($notifiable)
@@ -21,9 +22,10 @@ class NewBorrow extends Notification
     {
         return [
             'message' => trans('notifications.new-borrow.message', [
-                'fullname' => $this->borrowRequest->user->fullname,
-                'title' => $this->borrowRequest->book->title,
+                'fullname' => $this->user->fullname,
+                'title' => $this->book->title,
             ]),
+            'href' => route('borrows.index'),
         ];
     }
 

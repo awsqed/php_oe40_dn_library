@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Collection;
 
 
@@ -17,8 +18,8 @@ class HomeIndexViewTest extends TestCase
         Auth::shouldReceive('user')
             ->once()
             ->andReturn(new User());
-        Auth::shouldReceive('id')
-            ->twice();
+        Auth::shouldReceive('guard->check')
+            ->once();
     }
 
     public function tearDown(): void
