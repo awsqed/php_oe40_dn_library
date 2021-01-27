@@ -17,6 +17,8 @@ class HomeIndexViewTest extends TestCase
         Auth::shouldReceive('user')
             ->once()
             ->andReturn(new User());
+        Auth::shouldReceive('id')
+            ->twice();
     }
 
     public function tearDown(): void

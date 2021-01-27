@@ -74,6 +74,15 @@
                     </ul>
                 </li>
 
+                <li class="nav-item dropdown ml-2 notification">
+                    @php
+                        $unreadNotifications = $currentUser->unreadNotifications;
+                    @endphp
+                    @include('layouts.dashboard.notification', [
+                        'unreadNotifications' => $unreadNotifications,
+                    ])
+                </li>
+
                 <x-localization/>
             </ul>
         </nav>
@@ -110,6 +119,15 @@
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
+    <script type="text/javascript">
+        window.Echo.private('App.Models.User.{{ Auth::id() }}')
+            .notification((notification) => {
+                window.axios.get('/notifications/unread/{{ Auth::id() }}?view=dashboard', )
+                            .then(function (response) {
+                                $('.notification').html(response.data);
+                            });
+            });
+    </script>
     @yield('third_party_scripts')
     @stack('page_scripts')
 </body>
