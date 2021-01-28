@@ -26,14 +26,4 @@ class Like extends Model
         return $this->belongsTo(Book::class, 'book_id');
     }
 
-    static public function of(User $user, Book $book)
-    {
-        return Like::withTrashed()->where('user_id', $user->id)->where('book_id', $book->id)->first();
-    }
-
-    static public function check(User $user, Book $book)
-    {
-        return optional(Like::of($user, $book))->trashed() === false;
-    }
-
 }

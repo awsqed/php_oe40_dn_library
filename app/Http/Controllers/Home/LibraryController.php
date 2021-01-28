@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers\Home;
 
-use App\Models\Book;
-use App\Models\Like;
-use App\Models\Follow;
 use App\Models\Review;
 use Illuminate\Http\Request;
 use App\Http\Requests\RateRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\BorrowFormRequest;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Repositories\Interfaces\BookRepositoryInterface;
+use App\Repositories\Interfaces\LikeRepositoryInterface;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
+use App\Repositories\Interfaces\FollowRepositoryInterface;
 use App\Repositories\Interfaces\CategoryRepositoryInterface;
 use App\Repositories\Interfaces\BorrowRequestRepositoryInterface;
 
@@ -22,6 +21,10 @@ class LibraryController extends Controller
 {
 
     public function __construct(
+        UserRepositoryInterface $userRepo,
+        BookRepositoryInterface $bookRepo,
+        LikeRepositoryInterface $likeRepo,
+        FollowRepositoryInterface $followRepo,
         AuthorRepositoryInterface $authorRepo,
         CategoryRepositoryInterface $categoryRepo,
         BorrowRequestRepositoryInterface $borrowsRepo
@@ -32,22 +35,22 @@ class LibraryController extends Controller
             'viewAuthor',
         ]);
 
+        $this->userRepo = $userRepo;
+        $this->bookRepo = $bookRepo;
+        $this->likeRepo = $likeRepo;
+        $this->followRepo = $followRepo;
         $this->authorRepo = $authorRepo;
-        $this->categoryRepo = $categoryRepo;
         $this->borrowsRepo = $borrowsRepo;
+        $this->categoryRepo = $categoryRepo;
     }
 
     public function index(Request $request)
     {
-        $books = Book::with('image', 'author', 'reviews');
-
+        $subCategories = [];
         if ($request->filled('category')) {
             try {
-                $category = $this->categoryRepo->find($request->category);
-                $subCategories = $category->childArray();
-                $subCategories[] = $category->id;
-
-                $books->whereIn('category_id', $subCategories);
+                $subCategories = $this->categoryRepo->find($request->category)->childArray();
+                $subCategories[] = $request->category;
             } catch (ModelNotFoundException $e) {
                 return redirect()->route('library.index');
             }
@@ -55,36 +58,28 @@ class LibraryController extends Controller
 
         if ($request->filled('search')) {
             $search = '%'. str_replace(' ', '%', $request->search ?: '') .'%';
-            $books->where(function ($query) use ($search) {
-                $query->whereRaw('LOWER(title) like ?', $search)
-                        ->orWhereRaw('LOWER(description) like ?', $search)
-                        ->orWhereHas('author', function (Builder $query) use ($search) {
-                            $query->whereRaw('LOWER(first_name) like ?', $search)
-                                    ->orWhereRaw('LOWER(last_name) like ?', $search);
-                        })
-                        ->orWhereHas('publisher', function (Builder $query) use ($search) {
-                            $query->whereRaw('LOWER(name) like ?', $search);
-                        });
-            });
+        } else {
+            $search = null;
         }
 
-        return view('home.library.index', [
-            'categories' => $this->categoryRepo->getRootCategories(),
-            'books' => $books->paginate(config('app.num-rows'))->withQueryString(),
-        ]);
+        $categories = $this->categoryRepo->getRootCategories();
+        $books = $this->bookRepo->search($subCategories, $search);
+
+        return view('home.library.index', compact('categories', 'books'));
     }
 
-    public function viewBook(Book $book)
+    public function viewBook($bookId)
     {
-        return view('home.library.book', [
-            'book' => $book,
-            'reviews' => $book->reviews()->with('image')->latest('reviewed_at')->paginate(config('app.num-rows')),
-        ]);
+        $book = $this->bookRepo->find($bookId);
+        $reviews = $book->reviews()->with('image')->latest('reviewed_at')->paginate(config('app.num-rows'));
+
+        return view('home.library.book', compact('book', 'reviews'));
     }
 
-    public function borrowBook(BorrowFormRequest $request, Book $book)
+    public function borrowBook(BorrowFormRequest $request, $bookId)
     {
-        $this->borrowsRepo->createBorrowRequest(Auth::id(), $book->id, $request->from, $request->to);
+        $this->bookRepo->find($bookId);
+        $this->borrowsRepo->createBorrowRequest(Auth::id(), $bookId, $request->from, $request->to);
 
         return back();
     }
@@ -96,29 +91,18 @@ class LibraryController extends Controller
         return view('home.library.borrow-history', compact('history'));
     }
 
-    public function toggleLike(Book $book)
+    public function toggleLike($bookId)
     {
         $user = Auth::user();
+        $book = $this->bookRepo->find($bookId);
 
-        $like = Like::of($user, $book);
-        if ($like === null) {
-            $user->likes()->create([
-                'book_id' => $book->id,
-            ]);
-        } elseif ($like->trashed()) {
-            $like->restore();
-        } else {
-            $like->delete();
-        }
+        $this->likeRepo->toggle($user->id, $bookId);
 
-        $isLiked = Like::check($user, $book);
+        $likeButton = view('layouts.home.like-button', compact('user', 'book'))->render();
         $likeCount = $book->likes()->count();
 
         return response()->json([
-            'likeButton' => view('layouts.home.like-button', [
-                'user' => $user,
-                'book' => $book,
-            ])->render(),
+            'likeButton' => $likeButton,
             'likeCount' => $likeCount .' '. trans_choice('library.likes', $likeCount),
         ]);
     }
@@ -126,29 +110,17 @@ class LibraryController extends Controller
     public function toggleFollow($followableType, $followableId)
     {
         $user = Auth::user();
-        $model = Relation::getMorphedModel($followableType);
-        $followable = $model::findOrFail($followableId);
+        $btnClasses = $followableType === 'book' ? 'btn-lg btn-block' : '';
 
-        $follow = Follow::of($user, $followable);
-        if ($follow === null) {
-            $followable->followers()->save(new Follow([
-                'user_id' => $user->id,
-            ]));
-        } elseif ($follow->trashed()) {
-            $follow->restore();
-        } else {
-            $follow->delete();
-        }
+        $this->followRepo->toggle($user->id, $followableType, $followableId);
 
-        return view('layouts.home.follow-button', [
-            'user' => $user,
-            'followable' => $followable,
-            'btnClasses' => $followable instanceof Book ? 'btn-lg btn-block' : '',
-        ])->render();
+        return view('layouts.home.follow-button', compact('user', 'followableType', 'followableId', 'btnClasses'))->render();
     }
 
-    public function rateBook(RateRequest $request, Book $book)
+    public function rateBook(RateRequest $request, $bookId)
     {
+        $book = $this->bookRepo->find($bookId);
+
         if (Review::hasReview(Auth::user(), $book)) {
             abort(403, trans('general.messages.already-reviewed'));
         }
@@ -173,20 +145,18 @@ class LibraryController extends Controller
     public function viewAuthor($authorId)
     {
         $author = $this->authorRepo->find($authorId);
-        $follows = $author->followers()->with('user', 'user.image')->latest('followed_at')->paginate(config('app.num-followers'));
-        $books = $author->books()->with('image', 'reviews')->paginate(config('app.num-rows'));
+        $follows = $this->followRepo->getAuthorFollowers($authorId);
+        $books = $this->bookRepo->ofAuthor($authorId);
 
         return view('home.library.author', compact('author', 'follows', 'books'));
     }
 
-    public function viewProfile(User $user)
+    public function viewProfile($userId = null)
     {
-        $pUser = $user->id == null ? Auth::user() : $user;
-        $likes = $pUser->likes()->with('book', 'book.image')->latest('liked_at')->paginate(config('app.num-rows'));
-        $followers = $pUser->followers()
-                            ->with('user', 'user.image')
-                            ->latest('followed_at')
-                            ->paginate(config('app.num-follows-profile'));
+        $user = is_null($userId) ? Auth::user() : $this->userRepo->find($userId);
+
+        $likedBooks = $this->likeRepo->getByUserId($user->id);
+        $followers = $this->followRepo->getUserFollowers($user->id);
 
         $followings = [];
         $followableTypes = [
@@ -195,24 +165,12 @@ class LibraryController extends Controller
             'book',
         ];
         foreach($followableTypes as $followableType) {
-            $followings[$followableType] = $pUser->followings()
-                                                    ->with('followable', 'followable.image')
-                                                    ->where('followable_type', $followableType)
-                                                    ->latest('followed_at')
-                                                    ->paginate(config('app.num-follows-profile'));
+            $followings[$followableType] = $this->followRepo->getFollowings($user->id, $followableType);
         }
 
-        $reviews = $pUser->reviews()->with('author', 'image')->latest('reviewed_at')->paginate(config('app.num-rows'));
+        $reviews = $user->reviews()->with('author', 'image')->latest('reviewed_at')->paginate(config('app.num-rows'));
 
-        return view('home.library.profile', [
-            'pUser' => $pUser,
-            'likedBooks' => $likes,
-            'followers' => $followers,
-            'userFollowings' => $followings['user'],
-            'authorFollowings' => $followings['author'],
-            'bookFollowings' => $followings['book'],
-            'reviews' => $reviews,
-        ]);
+        return view('home.library.profile', compact('user', 'likedBooks', 'followers', 'followings', 'reviews'));
     }
 
 }
