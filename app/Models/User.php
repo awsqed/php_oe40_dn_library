@@ -6,12 +6,14 @@ use App\Traits\HasImage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasLocalePreference
 {
     use HasFactory, Notifiable, HasImage;
 
@@ -126,6 +128,11 @@ class User extends Authenticatable
     public function getBreadcrumbAttribute()
     {
         return $this->username;
+    }
+
+    public function preferredLocale()
+    {
+        return Session::get('locale', 'en');
     }
 
 }

@@ -120,11 +120,12 @@
 
             $('.notification').on('click', '.notification-link', {}, function (e) {
                 e.preventDefault();
-                window.axios.get("{{ route('notifications.mark-as-read') }}/"+ $(this).attr('notification-id'));
+
                 var href = $(this).attr('href');
-                setTimeout(function () {
-                    window.location.href = href;
-                }, 100);
+                window.axios.get("{{ route('notifications.mark-as-read') }}/"+ $(this).attr('notification-id'))
+                            .then(function (response) {
+                                window.location.href = href;
+                            });
             });
         </script>
     @endauth
