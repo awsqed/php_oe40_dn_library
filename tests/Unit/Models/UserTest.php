@@ -44,9 +44,9 @@ class UserTest extends ModelTestCase
         ], $this->model->getDates());
     }
 
-    public function test_user_has_an_image()
+    public function test_user_has_an_avatar()
     {
-        $this->assertMorphOne('image', Image::class, 'imageable_id');
+        $this->assertMorphOne('imageRelation', Image::class, 'imageable_id');
     }
 
     public function test_user_has_many_permissions()

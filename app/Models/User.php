@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasImage;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Notifications\Notifiable;
@@ -118,7 +119,8 @@ class User extends Authenticatable
 
     public function getFullnameAttribute()
     {
-        return "{$this->first_name} {$this->last_name}";
+        $fullname = "{$this->first_name} {$this->last_name}";
+        return Str::title(trim($fullname)) ?: $this->username;
     }
 
     public function getBreadcrumbAttribute()

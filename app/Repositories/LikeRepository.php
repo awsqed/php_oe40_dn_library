@@ -49,7 +49,7 @@ class LikeRepository extends BaseRepository implements LikeRepositoryInterface
 
     public function getByUserId($userId)
     {
-        return $this->model->with('book.image')
+        return $this->model->with('book.imageRelation')
                             ->where('user_id', $userId)
                             ->latest('liked_at')
                             ->paginate(config('app.num-rows'));

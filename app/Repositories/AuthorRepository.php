@@ -49,7 +49,7 @@ class AuthorRepository extends BaseRepository implements AuthorRepositoryInterfa
     {
         $limit = $limit ?? config('app.random-items');
 
-        return $this->model->inRandomOrder()->with('image')->limit($limit)->get();
+        return $this->model->inRandomOrder()->with('imageRelation')->limit($limit)->get();
     }
 
 }

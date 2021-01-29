@@ -38,7 +38,7 @@ class ReviewRepository extends BaseRepository implements ReviewRepositoryInterfa
 
     public function ofUser($userId)
     {
-        return $this->model->with('book.author', 'book.image')
+        return $this->model->with('book.author', 'book.imageRelation')
                             ->where('user_id', $userId)
                             ->latest('reviewed_at')
                             ->paginate(config('app.num-rows'));
@@ -46,7 +46,7 @@ class ReviewRepository extends BaseRepository implements ReviewRepositoryInterfa
 
     public function ofBook($bookId)
     {
-        return $this->model->with('user.image')
+        return $this->model->with('user.imageRelation')
                             ->where('book_id', $bookId)
                             ->latest('reviewed_at')
                             ->paginate(config('app.num-rows'));

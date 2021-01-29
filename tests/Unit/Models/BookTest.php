@@ -44,7 +44,7 @@ class BookTest extends ModelTestCase
 
     public function test_book_has_a_cover()
     {
-        $this->assertMorphOne('image', Image::class, 'imageable_id');
+        $this->assertMorphOne('imageRelation', Image::class, 'imageable_id');
     }
 
     public function test_book_belongs_to_an_author()

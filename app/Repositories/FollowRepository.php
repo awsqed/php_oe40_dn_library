@@ -46,7 +46,7 @@ class FollowRepository extends BaseRepository implements FollowRepositoryInterfa
 
     public function getFollowers($followableType, $followableId)
     {
-        return $this->model->with('user.image')
+        return $this->model->with('user.imageRelation')
                             ->where('followable_type', $followableType)
                             ->where('followable_id', $followableId)
                             ->latest('followed_at');
@@ -64,7 +64,7 @@ class FollowRepository extends BaseRepository implements FollowRepositoryInterfa
 
     public function getFollowings($userId, $followableType)
     {
-        return $this->model->with('followable.image')
+        return $this->model->with('followable.imageRelation')
                             ->where('user_id', $userId)
                             ->where('followable_type', $followableType)
                             ->latest('followed_at')

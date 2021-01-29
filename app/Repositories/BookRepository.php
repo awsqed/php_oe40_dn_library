@@ -19,14 +19,14 @@ class BookRepository extends BaseRepository implements BookRepositoryInterface
         $limit = $limit ?? config('app.random-items');
 
         return $this->model->inRandomOrder()
-                            ->with('author', 'image')
+                            ->with('author', 'imageRelation')
                             ->limit($limit)
                             ->get();
     }
 
     public function search($categoryIds, $search = null)
     {
-        $result = $this->model->with('image', 'author', 'reviews');
+        $result = $this->model->with('imageRelation', 'author', 'reviews');
 
         if (count($categoryIds)) {
             $result->whereIn('category_id', $categoryIds);
@@ -52,7 +52,7 @@ class BookRepository extends BaseRepository implements BookRepositoryInterface
     public function ofAuthor($authorId)
     {
         return $this->model->where('author_id', $authorId)
-                            ->with('image', 'reviews')
+                            ->with('imageRelation', 'reviews')
                             ->paginate(config('app.num-rows'), ['*'], 'pageBooks');
     }
 
