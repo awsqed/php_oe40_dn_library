@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Home;
 
-use App\Models\Review;
 use Illuminate\Http\Request;
 use App\Http\Requests\RateRequest;
 use App\Http\Controllers\Controller;
@@ -12,6 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Repositories\Interfaces\LikeRepositoryInterface;
+use App\Repositories\Interfaces\ReviewRepositoryInterface;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use App\Repositories\Interfaces\FollowRepositoryInterface;
 use App\Repositories\Interfaces\CategoryRepositoryInterface;
@@ -25,6 +25,7 @@ class LibraryController extends Controller
         BookRepositoryInterface $bookRepo,
         LikeRepositoryInterface $likeRepo,
         FollowRepositoryInterface $followRepo,
+        ReviewRepositoryInterface $reviewRepo,
         AuthorRepositoryInterface $authorRepo,
         CategoryRepositoryInterface $categoryRepo,
         BorrowRequestRepositoryInterface $borrowsRepo
@@ -39,6 +40,7 @@ class LibraryController extends Controller
         $this->bookRepo = $bookRepo;
         $this->likeRepo = $likeRepo;
         $this->followRepo = $followRepo;
+        $this->reviewRepo = $reviewRepo;
         $this->authorRepo = $authorRepo;
         $this->borrowsRepo = $borrowsRepo;
         $this->categoryRepo = $categoryRepo;
@@ -71,7 +73,7 @@ class LibraryController extends Controller
     public function viewBook($bookId)
     {
         $book = $this->bookRepo->find($bookId);
-        $reviews = $book->reviews()->with('image')->latest('reviewed_at')->paginate(config('app.num-rows'));
+        $reviews = $this->reviewRepo->ofBook($bookId);
 
         return view('home.library.book', compact('book', 'reviews'));
     }
@@ -121,22 +123,13 @@ class LibraryController extends Controller
     {
         $book = $this->bookRepo->find($bookId);
 
-        if (Review::hasReview(Auth::user(), $book)) {
-            abort(403, trans('general.messages.already-reviewed'));
-        }
+        $this->reviewRepo->createReview(Auth::id(), $bookId, $request);
 
-        $book->reviews()->attach(Auth::id(), [
-            'rating' => $request->rating,
-            'comment' => $request->comment,
-            'reviewed_at' => now(),
-        ]);
-
+        $reviews = $this->reviewRepo->ofBook($bookId);
         $reviewCount = $book->reviews()->count();
 
         return response()->json([
-            'reviewList' => view('layouts.home.reviews', [
-                            'reviews' => $book->reviews()->latest('reviewed_at')->paginate(config('app.num-rows')),
-                        ])->render(),
+            'reviewList' => view('layouts.home.reviews', compact('reviews'))->render(),
             'avgRating' => $book->printAvgRatingText() .' '. $book->avg_rating .' / 5',
             'reviewCount' => $reviewCount .' '. trans_choice('library.reviews', $reviewCount),
         ]);
@@ -168,7 +161,7 @@ class LibraryController extends Controller
             $followings[$followableType] = $this->followRepo->getFollowings($user->id, $followableType);
         }
 
-        $reviews = $user->reviews()->with('author', 'image')->latest('reviewed_at')->paginate(config('app.num-rows'));
+        $reviews = $this->reviewRepo->ofUser($user->id);
 
         return view('home.library.profile', compact('user', 'likedBooks', 'followers', 'followings', 'reviews'));
     }
