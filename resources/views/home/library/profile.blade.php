@@ -1,15 +1,15 @@
-<x-app :title="Str::title(trim($pUser->fullname)) ?: $pUser->username">
-    @php $user = Auth::user() @endphp
+<x-app :title="$user->fullname">
     <div class="col-9 mx-auto my-5 bg-white border p-4">
         <div class="text-center mb-5">
-            <img src="{{ $pUser->avatar }}" class="img-thumbnail rounded-circle rounded-sm" width="256" height="256">
+            <img src="{{ $user->avatar }}" class="img-thumbnail rounded-circle rounded-sm" width="256" height="256">
 
-            <h2 class="my-4">{{ Str::title(trim($pUser->fullname)) ?: $pUser->username }}</h2>
+            <h2 class="my-4">{{ $user->fullname }}</h2>
 
-            @if ($pUser->id != Auth::id())
+            @if ($user->id != Auth::id())
                 <div class="fl-button">
                     @include('layouts.home.follow-button', [
-                        'followable' => $pUser,
+                        'followableType' => 'user',
+                        'followableId' => $user->id,
                     ])
                 </div>
             @endif

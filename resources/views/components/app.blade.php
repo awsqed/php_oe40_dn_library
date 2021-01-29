@@ -63,7 +63,7 @@
                 @else
                     <li class="nav-item dropdown mr-2">
                         <a href="" class="nav-link dropdown" data-toggle="dropdown">
-                            {{ trim($currentUser->fullname) ?: $currentUser->username }}
+                            {{ $currentUser->fullname }}
                             <i class="fas fa-angle-down ml-2"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">

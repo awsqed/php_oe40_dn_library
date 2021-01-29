@@ -67,7 +67,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title mb-2">
                                         <a href="{{ route('library.book', $book) }}" class="h4 font-weight-bold text-reset text-decoration-none">
-                                            {{ Str::title($book->title) }}
+                                            {{ $book->title }}
                                         </a>
                                         <br />
                                         <a href="{{ route('library.author', $book->author) }}" class="text-reset text-decoration-none text-uppercase">

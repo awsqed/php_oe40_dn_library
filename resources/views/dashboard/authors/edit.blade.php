@@ -1,4 +1,4 @@
-<x-dashboard :title="Breadcrumbs::current()->title">
+<x-dashboard :title="trans('authors.editing') .': '. $author->fullname">
     <x-slot name="breadcrumbs">
         {{ Breadcrumbs::render('authors.edit', $author) }}
     </x-slot>

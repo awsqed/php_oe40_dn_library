@@ -1,7 +1,4 @@
-<x-app :title="Str::title($author->fullname)">
-    @php
-        $user = Auth::user();
-    @endphp
+<x-app :title="$author->fullname">
     <div class="col-9 mx-auto my-5 bg-white border p-4">
         <div class="d-flex mb-5">
             <div class="col-3 mr-3 text-center">
@@ -18,7 +15,8 @@
 
                     <div class="fl-button">
                         @include('layouts.home.follow-button', [
-                            'followable' => $author,
+                            'followableType' => 'author',
+                            'followableId' => $author->id,
                         ])
                     </div>
 
@@ -64,41 +62,37 @@
                 <hr>
                 @if ($books->count())
                     <x-pagination :data="$books"/>
-                @endif
 
-                <div class="row row-cols-1 px-3">
-                    @forelse ($books as $book)
-                        <div class="card p-0 bg-light">
-                            <div class="row no-gutters">
-                                <div class="col-4">
-                                    <a href="{{ route('library.book', $book) }}">
-                                        <img src="{{ $book->cover }}" class="card-img-top">
-                                    </a>
-                                </div>
-                                <div class="col-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title mb-2">
-                                            <a href="{{ route('library.book', $book) }}" class="h4 font-weight-bold text-reset text-decoration-none">
-                                                {{ Str::title($book->title) }}
-                                            </a>
-                                            <br />
-                                            <a href="{{ route('library.author', $author) }}" class="text-reset text-decoration-none text-uppercase">
-                                                <small>{{ $author->fullname }}</small>
-                                            </a>
-                                            <br />
-                                            <small>{!! $book->printAvgRatingText() !!}</small>
-                                        </h5>
-                                        <p class="card-text text-justify">{!! nl2br(e($book->description)) !!}</p>
+                    <div class="row row-cols-1 px-3">
+                        @foreach ($books as $book)
+                            <div class="card p-0 bg-light">
+                                <div class="row no-gutters">
+                                    <div class="col-4">
+                                        <a href="{{ route('library.book', $book) }}">
+                                            <img src="{{ $book->cover }}" class="card-img-top">
+                                        </a>
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="card-body">
+                                            <h5 class="card-title mb-2">
+                                                <a href="{{ route('library.book', $book) }}" class="h4 font-weight-bold text-reset text-decoration-none">
+                                                    {{ $book->title }}
+                                                </a>
+                                                <br />
+                                                <a href="{{ route('library.author', $author) }}" class="text-reset text-decoration-none text-uppercase">
+                                                    <small>{{ $author->fullname }}</small>
+                                                </a>
+                                                <br />
+                                                <small>{!! $book->printAvgRatingText() !!}</small>
+                                            </h5>
+                                            <p class="card-text text-justify">{!! nl2br(e($book->description)) !!}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    @empty
-                        <span class="col-12 h5 text-center text-uppercase">{{ trans('general.no-result') }}</span>
-                    @endforelse
-                </div>
+                        @endforeach
+                    </div>
 
-                @if ($books->count())
                     <x-pagination :data="$books"/>
                 @endif
                 <hr>

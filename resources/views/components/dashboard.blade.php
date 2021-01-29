@@ -40,7 +40,7 @@
                     <a href="" class="nav-link dropdown d-inline-flex align-items-center" data-toggle="dropdown">
                         <img src="{{ $currentUser->avatar }}" class="rounded-circle dashboard-avatar">
                         <span class="d-inline mx-2">
-                            {{ trim($currentUser->fullname) ?: $currentUser->username }}
+                            {{ $currentUser->fullname }}
                         </span>
                         <i class="fas fa-angle-down"></i>
                     </a>
@@ -48,7 +48,7 @@
                         <li class="user-header bg-primary">
                             <img src="{{ $currentUser->avatar }}" class="rounded-circle">
                             <p>
-                                {{ trim($currentUser->fullname) ?: $currentUser->username }}
+                                {{ $currentUser->fullname }}
                                 <small>
                                     {{
                                         trans('dashboard.member-since', [

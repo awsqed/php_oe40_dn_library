@@ -1,4 +1,4 @@
-<x-dashboard :title="trans('permissions.editing') .': '. $user->username">
+<x-dashboard :title="trans('users.editing') .': '. $user->username">
     <x-slot name="breadcrumbs">
         {{ Breadcrumbs::render('users.edit', $user) }}
     </x-slot>
