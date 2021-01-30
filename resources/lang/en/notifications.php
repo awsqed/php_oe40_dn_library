@@ -29,6 +29,13 @@ return [
             ],
         ],
     ],
+    'new-borrows-report' => [
+        'message' => 'You have <strong>:count</strong> new borrow requests',
+        'mail' => [
+            'subject' => 'You have :count new borrow requests',
+            'intro' => 'You have :count new borrow requests.',
+        ],
+    ],
     'mail' => [
         'hello' => 'Hello',
         'check-it-now' => 'Check It Now',

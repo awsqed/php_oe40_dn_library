@@ -29,6 +29,13 @@ return [
             ],
         ],
     ],
+    'new-borrows-report' => [
+        'message' => 'Có <strong>:count</strong> yêu cầu mượn sách chưa được duyệt',
+        'mail' => [
+            'subject' => ':count yêu cầu mượn sách mới',
+            'intro' => 'Bạn có :count yêu cầu mượn sách mới cần được duyệt.',
+        ],
+    ],
     'mail' => [
         'hello' => 'Xin chào',
         'check-it-now' => 'Kiểm Tra Ngay',

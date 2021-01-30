@@ -51,7 +51,7 @@ class BorrowRequestRepository extends BaseRepository implements BorrowRequestRep
                             ->paginate(config('app.num-rows'));
     }
 
-    public function search($search, $filter = null)
+    public function search($search, $filter, $withPaginator = true)
     {
         $result = $this->model->with('user', 'book');
 
@@ -95,9 +95,11 @@ class BorrowRequestRepository extends BaseRepository implements BorrowRequestRep
             });
         }
 
-        return $result->defaultSort()
-                ->paginate(config('app.num-rows'))
-                ->withQueryString();
+        return $withPaginator
+                ? $result->defaultSort()
+                            ->paginate(config('app.num-rows'))
+                            ->withQueryString()
+                : $result->get();
     }
 
     public function updateBorrowRequest($borrowRequestId, $action)
