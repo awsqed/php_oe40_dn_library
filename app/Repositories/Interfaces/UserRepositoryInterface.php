@@ -13,4 +13,6 @@ interface UserRepositoryInterface extends RepositoryInterface
 
     public function deleteUser($userId);
 
+    public function whereHasPermissions($permissions);
+
 }

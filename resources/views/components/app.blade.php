@@ -86,6 +86,15 @@
                             </form>
                         </div>
                     </li>
+
+                    <li class="nav-item dropdown mx-2 notification">
+                        @php
+                            $unreadNotifications = $currentUser->unreadNotifications;
+                        @endphp
+                        @include('layouts.home.notification', [
+                            'unreadNotifications' => $unreadNotifications,
+                        ])
+                    </li>
                 @endguest
 
                 <x-localization/>
@@ -99,6 +108,15 @@
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
+    <script type="text/javascript">
+        window.Echo.private('App.Models.User.{{ Auth::id() }}')
+            .notification((notification) => {
+                window.axios.get('/notifications/unread/{{ Auth::id() }}?view=home')
+                            .then(function (response) {
+                                $('.notification').html(response.data);
+                            });
+            });
+    </script>
     @yield('third_party_scripts')
     @stack('page_scripts')
 </body>

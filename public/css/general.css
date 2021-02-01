@@ -31,3 +31,22 @@ body {
     width: 20px;
     height: 20px;
 }
+
+.notification-badge {
+    position: absolute;
+    margin-top: -2rem;
+    margin-left: 1.5rem;
+}
+
+.notification-dropdown {
+    width: 400px;
+}
+
+.notification-body {
+    height: 300px;
+    overflow-y: scroll;
+}
+
+.notification-row {
+    border-left: 4px solid;
+}

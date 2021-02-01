@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\Builder;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 
 class UserRepository extends BaseRepository implements UserRepositoryInterface
@@ -84,6 +84,19 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         }
 
         $this->delete($userId);
+    }
+
+    public function whereHasPermissions($permissions)
+    {
+        return $this->model->all()->filter(function ($value, $key) use ($permissions) {
+            foreach ($permissions as $permission) {
+                if (!$value->hasPermission($permission)) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
     }
 
 }
