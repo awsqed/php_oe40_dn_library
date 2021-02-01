@@ -50,3 +50,7 @@ body {
 .notification-row {
     border-left: 4px solid;
 }
+
+.chart {
+    height: 300px;
+}

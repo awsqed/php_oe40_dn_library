@@ -21,6 +21,7 @@ mix.scripts(
         'public/js/borrows.js',
         'public/js/like-follow-button.js',
         'public/js/reviews.js',
+        'public/js/charts.js',
     ],
     'public/js/all.js'
 );
