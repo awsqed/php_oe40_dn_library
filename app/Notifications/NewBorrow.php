@@ -46,8 +46,9 @@ class NewBorrow extends Notification implements ShouldQueue
                 'fullname' => $this->user->fullname,
                 'title' => $this->book->title,
             ]),
-            'href' => route('borrows.index'),
+            'href' => route('borrows.index') ."?search={$this->user->fullname}",
             'borrow-id' => $this->borrowId,
+            'can-accept' => $this->book->amount > 0,
         ];
     }
 

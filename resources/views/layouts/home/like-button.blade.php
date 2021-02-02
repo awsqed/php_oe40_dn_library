@@ -1,5 +1,5 @@
+@inject('repository', 'App\Repositories\Interfaces\LikeRepositoryInterface')
 @php
-    $repository = App::make(App\Repositories\Interfaces\LikeRepositoryInterface::class);
     $liked = $repository->check($currentUserId, $book->id)
 @endphp
 <button class="btn btn-block btn-lg @if ($liked) btn-outline-danger @else btn-outline-primary @endif mt-2 btn-like" value="{{ $book->id }}">

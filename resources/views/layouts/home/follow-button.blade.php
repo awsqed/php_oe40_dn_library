@@ -1,5 +1,5 @@
+@inject('repository', 'App\Repositories\Interfaces\FollowRepositoryInterface')
 @php
-    $repository = App::make(App\Repositories\Interfaces\FollowRepositoryInterface::class);
     $followed = $repository->check(Auth::id(), $followableType, $followableId)
 @endphp
 <button class="btn {{ $btnClasses ?? '' }} @if ($followed) btn-outline-danger @else btn-outline-primary @endif btn-follow" value="{{ $followableId }}" followable-type="{{ $followableType }}">

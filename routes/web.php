@@ -64,9 +64,11 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
         'show',
     ]);
 
-    Route::get('/borrows', [BorrowRequestController::class, 'index'])->name('borrows.index');
-
-    Route::post('/borrows/{borrowRequest}/{action}', [BorrowRequestController::class, 'update'])->name('borrows.update');
+    Route::resource('borrows', BorrowRequestController::class)->only([
+        'index',
+        'update',
+        'destroy',
+    ]);
 
 });
 

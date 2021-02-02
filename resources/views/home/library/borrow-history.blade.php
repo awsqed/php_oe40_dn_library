@@ -14,6 +14,7 @@
                     <th>{{ trans('library.borrow.returned-at') }}</th>
                     <th>{{ trans('library.borrow.status') }}</th>
                     <th>{{ trans('library.borrow.note') }}</th>
+                    <th>{{ trans('general.action') }}</th>
                 </tr>
             </x-slot>
 
@@ -51,6 +52,13 @@
                         <td>{{ $record->returned_at }}</td>
                         <td>{{ $record->status_text }}</td>
                         <td>{{ $record->note_text }}</td>
+                        <td>
+                            @if ($record->status_text == trans('library.borrow.processing'))
+                                <a href="" class="text-danger delete-borrow" borrow-id="{{ $record->id }}">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            @endif
+                        </td>
                     </tr>
                 @empty
                     <tr class="text-center"><td colspan="6">{{ trans('general.no-result') }}</td></tr>
@@ -62,4 +70,8 @@
             @endif
         </x-table>
     </div>
+
+    @push('page_scripts')
+        <script src="{{ mix('js/all.js') }}"></script>
+    @endpush
 </x-app>
