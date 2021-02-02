@@ -2,20 +2,39 @@
 
 namespace App\Notifications;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Broadcasting\BroadcastException;
+use Illuminate\Notifications\Messages\MailMessage;
 
-class NewBorrow extends Notification
+class NewBorrow extends Notification implements ShouldQueue
 {
+    use Queueable;
+
+    public $user;
+    public $book;
 
     public function __construct($borrowRequest)
     {
-        $this->user = $borrowRequest->user;
-        $this->book = $borrowRequest->book;
+        $this->user = $borrowRequest->user->withoutRelations();
+        $this->book = $borrowRequest->book->withoutRelations();
     }
 
     public function via($notifiable)
     {
-        return ['database', 'broadcast'];
+        $via = [
+            'database',
+            'mail',
+        ];
+
+        try {
+            Broadcast::connection(config('broadcasting.default'))->broadcast([], '');
+            $via[] = 'broadcast';
+        } catch (BroadcastException $e) {}
+
+        return $via;
     }
 
     public function toArray($notifiable)
@@ -27,6 +46,17 @@ class NewBorrow extends Notification
             ]),
             'href' => route('borrows.index'),
         ];
+    }
+
+    public function toMail($notifiable)
+    {
+        return (new MailMessage())
+                ->subject(trans('notifications.new-borrow.mail.subject'))
+                ->markdown('mails.new-borrow', [
+                    'notifiable' => $notifiable,
+                    'user' => $this->user,
+                    'book' => $this->book,
+                ]);
     }
 
 }

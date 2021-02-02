@@ -36,8 +36,8 @@
             </ul>
 
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown user-menu mr-1">
-                    <a href="" class="nav-link dropdown d-inline-flex align-items-center" data-toggle="dropdown">
+                <li class="nav-item dropdown user-menu mr-2">
+                    <a href="" class="nav-link dropdown d-inline-flex align-items-center bg-light border rounded-pill pl-0" data-toggle="dropdown">
                         <img src="{{ $currentUser->avatar }}" class="rounded-circle dashboard-avatar">
                         <span class="d-inline mx-2">
                             {{ $currentUser->fullname }}
@@ -74,7 +74,7 @@
                     </ul>
                 </li>
 
-                <li class="nav-item dropdown ml-2 notification">
+                <li class="nav-item dropdown notification">
                     @php
                         $unreadNotifications = $currentUser->unreadNotifications;
                     @endphp
@@ -130,11 +130,12 @@
 
         $('.notification').on('click', '.notification-link', {}, function (e) {
             e.preventDefault();
-            window.axios.get("{{ route('notifications.mark-as-read') }}/"+ $(this).attr('notification-id'));
+
             var href = $(this).attr('href');
-                setTimeout(function () {
-                    window.location.href = href;
-                }, 100);
+            window.axios.get("{{ route('notifications.mark-as-read') }}/"+ $(this).attr('notification-id'))
+                        .then(function (response) {
+                            window.location.href = href;
+                        });
         });
     </script>
     @yield('third_party_scripts')
