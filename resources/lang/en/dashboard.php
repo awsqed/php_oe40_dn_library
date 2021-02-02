@@ -15,5 +15,12 @@ return [
     'authors' => 'Authors',
     'publishers' => 'Publishers',
     'borrow-requests' => 'Borrow Requests',
+    'charts' => [
+        'data-description' => 'Number of borrow request',
+        'daily' => 'Daily Borrow Request Report',
+        'monthly' => 'Monthly Borrow Request Report',
+        'yearly' => 'Yearly Borrow Request Report',
+        'total-requests' => 'TOTAL REQUESTS',
+    ],
 
 ];

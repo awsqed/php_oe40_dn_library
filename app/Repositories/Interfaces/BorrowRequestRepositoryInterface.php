@@ -17,4 +17,10 @@ interface BorrowRequestRepositoryInterface extends RepositoryInterface
 
     public function updateBorrowRequest($borrowRequestId, $action);
 
+    public function whereDate($date, $field = 'created_at');
+
+    public function whereMonth($month, $field = 'created_at');
+
+    public function whereYear($year, $field = 'created_at');
+
 }
