@@ -13,11 +13,13 @@ class NewBorrow extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    public $borrowId;
     public $user;
     public $book;
 
     public function __construct($borrowRequest)
     {
+        $this->borrowId = $borrowRequest->id;
         $this->user = $borrowRequest->user->withoutRelations();
         $this->book = $borrowRequest->book->withoutRelations();
     }
@@ -45,6 +47,7 @@ class NewBorrow extends Notification implements ShouldQueue
                 'title' => $this->book->title,
             ]),
             'href' => route('borrows.index'),
+            'borrow-id' => $this->borrowId,
         ];
     }
 

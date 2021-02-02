@@ -78,7 +78,7 @@
                     @php
                         $unreadNotifications = $currentUser->unreadNotifications;
                     @endphp
-                    @include('layouts.dashboard.notification', [
+                    @include('layouts.notifications.dashboard', [
                         'unreadNotifications' => $unreadNotifications,
                     ])
                 </li>
