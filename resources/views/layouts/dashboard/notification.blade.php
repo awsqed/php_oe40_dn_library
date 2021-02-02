@@ -21,7 +21,7 @@
                 <tr>
                     <td>
                         <div class="h6 m-0 pl-2 border-primary notification-row">
-                            <a href="{{ route('borrows.index') }}" class="text-reset text-decoration-none">
+                            <a href="{{ $notification->data['href'] }}" class="text-reset text-decoration-none notification-link" notification-id="{{ $notification->id }}">
                                 {!! $notification->data['message'] !!}
                             </a>
                             <br>

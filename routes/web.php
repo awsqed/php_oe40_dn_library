@@ -75,7 +75,7 @@ Route::prefix('notifications')->name('notifications.')->group(function () {
 
     Route::get('/unread/{user}', [NotificationController::class, 'getUnreadNotifications'])->name('unread');
 
-    Route::get('/mark-as-read', [NotificationController::class, 'markAsRead'])->name('mark-as-read');
+    Route::get('/mark-as-read/{notification?}', [NotificationController::class, 'markAsRead'])->name('mark-as-read');
 
 });
 

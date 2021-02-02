@@ -3,10 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Support\Carbon;
-use App\Notifications\NewBorrow;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use App\Repositories\Interfaces\UserRepositoryInterface;
 
 class BorrowRequest extends Pivot
 {
@@ -16,18 +13,6 @@ class BorrowRequest extends Pivot
     public $incrementing = true;
 
     protected $guarded = [];
-
-    protected static function booted()
-    {
-        static::created(function($borrowRequest) {
-            $users = app()->make(UserRepositoryInterface::class)->whereHasPermissions([
-                'admin.read-borrow-request',
-                'admin.update-borrow-request',
-            ]);
-
-            Notification::send($users, new NewBorrow($borrowRequest));
-        });
-    }
 
     public function user()
     {

@@ -121,12 +121,21 @@
     <script src="{{ mix('js/app.js') }}"></script>
     <script type="text/javascript">
         window.Echo.private('App.Models.User.{{ Auth::id() }}')
-            .notification((notification) => {
-                window.axios.get('/notifications/unread/{{ Auth::id() }}?view=dashboard', )
-                            .then(function (response) {
-                                $('.notification').html(response.data);
-                            });
-            });
+                    .notification((notification) => {
+                        window.axios.get("{{ route('notifications.unread', $currentUser) }}?view=dashboard")
+                                    .then(function (response) {
+                                        $('.notification').html(response.data);
+                                    });
+                    });
+
+        $('.notification').on('click', '.notification-link', {}, function (e) {
+            e.preventDefault();
+            window.axios.get("{{ route('notifications.mark-as-read') }}/"+ $(this).attr('notification-id'));
+            var href = $(this).attr('href');
+                setTimeout(function () {
+                    window.location.href = href;
+                }, 100);
+        });
     </script>
     @yield('third_party_scripts')
     @stack('page_scripts')
