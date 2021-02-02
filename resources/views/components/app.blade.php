@@ -108,27 +108,6 @@
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
-    @auth
-        <script type="text/javascript">
-            window.Echo.private('App.Models.User.{{ Auth::id() }}')
-                        .notification((notification) => {
-                            window.axios.get("{{ route('notifications.unread', $currentUser) }}?view=home")
-                                        .then(function (response) {
-                                            $('.notification').html(response.data);
-                                        });
-                        });
-
-            $('.notification').on('click', '.notification-link', {}, function (e) {
-                e.preventDefault();
-
-                var href = $(this).attr('href');
-                window.axios.get("{{ route('notifications.mark-as-read') }}/"+ $(this).attr('notification-id'))
-                            .then(function (response) {
-                                window.location.href = href;
-                            });
-            });
-        </script>
-    @endauth
     @yield('third_party_scripts')
     @stack('page_scripts')
 </body>
