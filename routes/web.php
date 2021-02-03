@@ -5,6 +5,7 @@ use App\Http\Controllers\Dashboard\UserController;
 use App\Http\Controllers\Dashboard\AuthorController;
 use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\PublisherController;
+use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dashboard\PermissionController;
 use App\Http\Controllers\Dashboard\BorrowRequestController;
 use App\Http\Controllers\Home\HomeController;
@@ -37,9 +38,7 @@ Route::name('library.')->group(function () {
 
 Route::prefix('dashboard')->middleware('auth')->group(function () {
 
-    Route::get('/', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('permissions', PermissionController::class)->only([
         'index',
