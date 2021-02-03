@@ -13,7 +13,7 @@ interface BorrowRequestRepositoryInterface extends RepositoryInterface
 
     public function ofUser($userId);
 
-    public function search($search, $filter = null);
+    public function search($search, $filter, $withPaginator = true);
 
     public function updateBorrowRequest($borrowRequestId, $action);
 
