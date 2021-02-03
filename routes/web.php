@@ -72,7 +72,9 @@ Route::prefix('dashboard')->middleware('auth')->group(function () {
 
 Route::prefix('notifications')->name('notifications.')->group(function () {
 
-    Route::get('/unread/{user}', [NotificationController::class, 'getUnreadNotifications'])->name('unread');
+    Route::get('/channel', [NotificationController::class, 'getChannel']);
+
+    Route::get('/unread', [NotificationController::class, 'getUnreadNotifications'])->name('unread');
 
     Route::get('/mark-as-read/{notification?}', [NotificationController::class, 'markAsRead'])->name('mark-as-read');
 

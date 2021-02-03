@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use App\Notifications\MarkedAsRead;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Broadcasting\BroadcastException;
 use Illuminate\Notifications\DatabaseNotification;
 
@@ -17,9 +17,20 @@ class NotificationController extends Controller
         $this->middleware('auth');
     }
 
-    public function getUnreadNotifications(Request $request, User $user)
+    public function getChannel()
     {
-        $unreadNotifications = $user->unreadNotifications;
+        $channel = '';
+        try {
+            Broadcast::connection(config('broadcasting.default'))->broadcast([], '');
+            $channel = 'App.Models.User.'. Auth::id();
+        } catch (BroadcastException $e) {}
+
+        return $channel;
+    }
+
+    public function getUnreadNotifications(Request $request)
+    {
+        $unreadNotifications = Auth::user()->unreadNotifications;
 
         return view("layouts.{$request->view}.notification", compact('unreadNotifications'))->render();
     }
