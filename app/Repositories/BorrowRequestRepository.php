@@ -129,4 +129,19 @@ class BorrowRequestRepository extends BaseRepository implements BorrowRequestRep
         $this->update($borrowRequestId, $attributes);
     }
 
+    public function whereDate($date, $field = 'created_at')
+    {
+        return $this->model->whereDate($field, $date)->get();
+    }
+
+    public function whereMonth($month, $field = 'created_at')
+    {
+        return $this->model->whereMonth($field, $month)->get();
+    }
+
+    public function whereYear($year, $field = 'created_at')
+    {
+        return $this->model->whereYear($field, $year)->get();
+    }
+
 }
