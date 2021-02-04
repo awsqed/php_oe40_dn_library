@@ -25,6 +25,9 @@
                                 {!! $notification->data['message'] !!}
                             </a>
                             <br>
+                            @can('update-borrow-request')
+                                @includeWhen($notification->type == 'App\Notifications\NewBorrow', 'layouts.notifications.new-borrow')
+                            @endcan
                             <small class="text-primary font-weight-bold">
                                 {{ (new Carbon\Carbon($notification->created_at))->diffForHumans(now()) }}
                             </small>

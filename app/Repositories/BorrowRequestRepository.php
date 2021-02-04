@@ -53,9 +53,8 @@ class BorrowRequestRepository extends BaseRepository implements BorrowRequestRep
 
     public function search($search, $filter, $withPaginator = true)
     {
-        $result = $this->model->with('user', 'book');
-
         $configKey = 'app.borrow-request.status-code';
+        $result = $this->model->with('user', 'book');
 
         if (is_null($filter) || $filter === '') {
             $filter = config("{$configKey}.new");
@@ -84,11 +83,12 @@ class BorrowRequestRepository extends BaseRepository implements BorrowRequestRep
         }
 
         if (!empty($search)) {
-            $search = '%'. str_replace(' ', '%', $search ?: '') .'%';
+            $search = '%'. str_replace(' ', '%', $search) .'%';
             $result->where(function ($query) use ($search) {
                 $query->whereHas('user', function (Builder $query) use ($search) {
                     $query->whereRaw('LOWER(first_name) like ?', $search)
-                            ->orWhereRaw('LOWER(last_name) like ?', $search);
+                            ->orWhereRaw('LOWER(last_name) like ?', $search)
+                            ->orWhereRaw('CONCAT(first_name, " ", last_name) like ?', $search);
                 })->orWhereHas('book', function (Builder $query) use ($search) {
                     $query->whereRaw('LOWER(title) like ?', $search);
                 });
@@ -104,29 +104,32 @@ class BorrowRequestRepository extends BaseRepository implements BorrowRequestRep
 
     public function updateBorrowRequest($borrowRequestId, $action)
     {
+        $configKey = 'app.borrow-request.status-code';
         $borrowRequest = $this->find($borrowRequestId);
 
         $attributes = [];
         switch ($action) {
             case 'accept':
-                $attributes['status'] = config('app.borrow-request.status-code.accepted');
+                $attributes['status'] = config("{$configKey}.accepted");
                 $attributes['processed_at'] = now();
                 break;
             case 'reject':
-                $attributes['status'] = config('app.borrow-request.status-code.rejected');
+                $attributes['status'] = config("{$configKey}.rejected");
                 $attributes['processed_at'] = now();
                 break;
             case 'return':
                 $attributes['status'] = date('Y-m-d') > $borrowRequest->to
-                                ? config('app.borrow-request.status-code.returned-late')
-                                : config('app.borrow-request.status-code.returned');
+                                ? config("{$configKey}.returned-late")
+                                : config("{$configKey}.returned");
                 $attributes['returned_at'] = now();
                 break;
             default:
                 return;
         }
 
-        $this->update($borrowRequestId, $attributes);
+        if ($borrowRequest->status !== $attributes['status']) {
+            $this->update($borrowRequestId, $attributes);
+        }
     }
 
     public function whereDate($date, $field = 'created_at')

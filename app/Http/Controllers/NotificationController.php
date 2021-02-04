@@ -32,7 +32,7 @@ class NotificationController extends Controller
     {
         $unreadNotifications = Auth::user()->unreadNotifications;
 
-        return view("layouts.{$request->view}.notification", compact('unreadNotifications'))->render();
+        return view("layouts.notifications.{$request->view}", compact('unreadNotifications'))->render();
     }
 
     public function markAsRead(DatabaseNotification $notification)

@@ -14,7 +14,7 @@ $('.borrow-table').on('click', '.btn-reject', {}, function () {
         'search': $('input[name=search]').val(),
         'filter': $('select[name=filter] option:checked').val()
     }).then(function (response) {
-                    $('.borrow-table').html(response.data);
+        $('.borrow-table').html(response.data);
     });
 });
 

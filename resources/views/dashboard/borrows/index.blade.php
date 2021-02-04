@@ -4,7 +4,7 @@
     </x-slot>
 
     <form class="form-inline mb-3" action="{{ route('borrows.index') }}" method="GET">
-        <input class="form-control flex-fill" type="text" name="search" placeholder="{{ trans('borrows.search-placeholder') }}">
+        <input class="form-control flex-fill" type="text" name="search" placeholder="{{ trans('borrows.search-placeholder') }}" value="{{ Request::input('search') ?: null }}">
 
         <select class="custom-select mx-2" name="filter">
             <option value="{{ $statusCode['new'] }}" hidden disabled {{ empty(Request::input('filter')) ? 'selected' : '' }}>

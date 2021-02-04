@@ -91,7 +91,7 @@
                         @php
                             $unreadNotifications = $currentUser->unreadNotifications;
                         @endphp
-                        @include('layouts.home.notification', [
+                        @include('layouts.notifications.home', [
                             'unreadNotifications' => $unreadNotifications,
                         ])
                     </li>
