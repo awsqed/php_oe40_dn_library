@@ -2,31 +2,34 @@
 
 namespace Database\Seeders;
 
+use DateInterval;
+use App\Models\BorrowRequest;
 use Illuminate\Database\Seeder;
 
 class BorrowRequestSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
+
     public function run()
     {
         $faker = \Faker\Factory::create();
-        for ($i = 0; $i < 10; $i++) {
-            for ($j = 0; $j < 100; $j++) {
-                if ($faker->boolean) {
-                    \App\Models\BorrowRequest::create([
-                        'user_id' => $i + 1,
-                        'book_id' => $j + 1,
-                        'from' => $faker->dateTimeBetween('-30 days', "-5 days"),
-                        'to' => $faker->dateTimeBetween('+15 days', "+30 days"),
-                        'note' => $faker->sentence,
-                        'status' => false,
+
+        BorrowRequest::withoutEvents(function () use ($faker) {
+            for ($i = 1; $i <= 100; $i++) {
+                for ($j = 1; $j <= 4; $j++) {
+                    $from = $faker->dateTimeThisYear('2021-12-30');
+                    $to = $from->add(new DateInterval('P1D'));
+
+                    BorrowRequest::create([
+                        'user_id' => $i,
+                        'book_id' => $faker->unique()->numberBetween(1, 425),
+                        'from' => $from,
+                        'to' => $to,
+                        'created_at' => $from,
+                        'updated_at' => $from,
                     ]);
                 }
             }
-        }
+        });
     }
+
 }
