@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+use Illuminate\Database\DBAL\TimestampType;
 
 return [
 
@@ -142,6 +143,18 @@ return [
             'database' => env('REDIS_CACHE_DB', '1'),
         ],
 
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Doctrine DBAL
+    |--------------------------------------------------------------------------
+    */
+
+    'dbal' => [
+        'types' => [
+            'timestamp' => TimestampType::class,
+        ],
     ],
 
 ];
