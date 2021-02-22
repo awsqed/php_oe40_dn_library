@@ -28,7 +28,7 @@ class BorrowRequestRepository extends BaseRepository implements BorrowRequestRep
     {
         return $this->model->where('user_id', $userId)
                             ->where('book_id', $bookId)
-                            ->where('status', null)
+                            ->where('status', config('app.borrow-request.status-code.new'))
                             ->latest()
                             ->first();
     }
@@ -37,7 +37,10 @@ class BorrowRequestRepository extends BaseRepository implements BorrowRequestRep
     {
         return $this->model->where('user_id', $userId)
                             ->where('book_id', $bookId)
-                            ->where('status', config('app.borrow-request.status-code.accepted'))
+                            ->whereIn('status', [
+                                config('app.borrow-request.status-code.accepted'),
+                                config('app.borrow-request.status-code.overdue'),
+                            ])
                             ->where('returned_at', null)
                             ->latest()
                             ->first();
@@ -64,6 +67,7 @@ class BorrowRequestRepository extends BaseRepository implements BorrowRequestRep
             case 'all':
                 break;
 
+            case config("{$configKey}.new"):
             case config("{$configKey}.accepted"):
             case config("{$configKey}.rejected"):
             case config("{$configKey}.returned"):
@@ -71,12 +75,11 @@ class BorrowRequestRepository extends BaseRepository implements BorrowRequestRep
                 $result->where('status', $filter);
                 break;
 
-            case config("{$configKey}.new"):
-                $result->where('status', null);
-                break;
-
             case config("{$configKey}.overdue"):
-                $result->where('status', config("{$configKey}.accepted"))
+                $result->whereIn('status', [
+                            config("{$configKey}.accepted"),
+                            config("{$configKey}.overdue"),
+                        ])
                         ->where('returned_at', null)
                         ->where('to', '<', date('Y-m-d'));
                 break;

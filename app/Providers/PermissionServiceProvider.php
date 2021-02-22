@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Permission;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\QueryException;
 
@@ -46,7 +47,15 @@ class PermissionServiceProvider extends ServiceProvider
     protected function loadPermissions(array $arg, Permission $parent = null)
     {
         try {
-            foreach ($arg as $key => $value) {
+            if (Permission::all()->isNotEmpty()) {
+                return;
+            }
+        } catch (QueryException $e) {
+            return;
+        }
+
+        foreach ($arg as $key => $value) {
+            try {
                 $permission = Permission::create([
                     'name' => ($parent == null ? '' : "{$parent->name}.") . $key,
                     'parent_id' => $parent == null ? null : $parent->id,
@@ -54,19 +63,17 @@ class PermissionServiceProvider extends ServiceProvider
 
                 if (is_array($value)) {
                     foreach ($value as $key2 => $value2) {
-                        $childPermission = $permission->childs()->save(
-                            new Permission([
-                                'name' => "{$key}.{$key2}",
-                            ]
-                        ));
+                        $childPermission = $permission->childs()->save(new Permission([
+                            'name' => "{$key}.{$key2}",
+                        ]));
 
                         if (is_array($value2)) {
                             $this->loadPermissions($value2, $childPermission);
                         }
                     }
                 }
-            }
-        } catch (QueryException $e) {}
+            } catch (QueryException $e) {}
+        }
     }
 
 }

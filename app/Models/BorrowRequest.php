@@ -26,19 +26,21 @@ class BorrowRequest extends Pivot
 
     public function getStatusTextAttribute()
     {
+        $configKey = 'app.borrow-request.status-code';
         switch ($this->status ?? -1) {
-            case config('app.borrow-request.status-code.rejected'):
+            case config("{$configKey}.rejected"):
                 return trans('library.borrow.rejected');
 
-            case config('app.borrow-request.status-code.accepted'):
+            case config("{$configKey}.accepted"):
+            case config("{$configKey}.overdue"):
                 return now()->toDateString() > $this->to
                         ? trans('library.borrow.overdue')
                         : trans('library.borrow.borrowing');
 
-            case config('app.borrow-request.status-code.returned'):
+            case config("{$configKey}.returned"):
                 return trans('library.borrow.returned');
 
-            case config('app.borrow-request.status-code.returned-late'):
+            case config("{$configKey}.returned-late"):
                 return trans('library.borrow.returned-late');
 
             default:
@@ -48,20 +50,25 @@ class BorrowRequest extends Pivot
 
     public function getNoteTextAttribute()
     {
-        Carbon::setLocale(app()->getLocale());
+        $configKey = 'app.borrow-request.status-code';
+
+        $note = $this->note ?? '';
         $to = new Carbon($this->to);
-
         $status = $this->status ?? -1;
-        if ($status == config('app.borrow-request.status-code.accepted') && $to->isPast(now())) {
-            return trans('library.borrow.overdue') .' ('. trans_choice('library.borrow.days-late', $to->diffInDays(now())) .')';
+
+        if (
+            ($status == config("{$configKey}.accepted") || $status == config("{$configKey}.overdue"))
+            && $to->isPast()
+        ) {
+            $note = trans('library.borrow.overdue') .' ('. trans_choice('library.borrow.days-late', $to->diffInDays(now())) .')';
         }
 
-        if ($status == config('app.borrow-request.status-code.returned-late')) {
+        if ($status == config("{$configKey}.returned-late")) {
             $returnedAt = new Carbon($this->returned_at);
-            return $this->note .' ('. trans_choice('library.borrow.days-late', $to->diffInDays($returnedAt)) .')';
+            $note .= ' ('. trans_choice('library.borrow.days-late', $to->diffInDays($returnedAt)) .')';
         }
 
-        return $this->note;
+        return $note;
     }
 
     public function scopeDefaultSort($query)
