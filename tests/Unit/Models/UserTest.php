@@ -3,6 +3,7 @@
 namespace Tests\Unit\Models;
 
 use Closure;
+use Mockery;
 use App\Models\User;
 use App\Models\Book;
 use App\Models\Like;
@@ -11,6 +12,7 @@ use App\Models\Follow;
 use Tests\ModelTestCase;
 use App\Models\Permission;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
 
 class UserTest extends ModelTestCase
 {
@@ -25,6 +27,7 @@ class UserTest extends ModelTestCase
     {
         parent::tearDown();
         unset($this->model);
+        Mockery::close();
     }
 
     public function test_model_configuration()
@@ -116,12 +119,20 @@ class UserTest extends ModelTestCase
         $this->assertSame($default, $this->model->avatar);
     }
 
-    public function test_user_permissions_is_cached()
+    public function test_user_can_check_permissions()
     {
         Cache::shouldReceive('remember')
                 ->once()
-                ->with('foobar', config('app.cache-time'), Closure::class)
-                ->andReturn(false);
+                ->andReturn(null);
+
+        $this->assertFalse($this->model->hasPermission('foobar'));
+    }
+
+    public function test_user_permissions_is_cached()
+    {
+        Cache::shouldReceive('remember')
+                ->twice()
+                ->andReturn(new Permission(), false);
 
         $this->assertFalse($this->model->hasPermission('foobar'));
     }
@@ -144,6 +155,16 @@ class UserTest extends ModelTestCase
         $this->model->username = $username;
 
         $this->assertSame($username, $this->model->breadcrumb);
+    }
+
+    public function test_user_has_a_preferred_locale()
+    {
+        Session::shouldReceive('get')
+                ->once()
+                ->with('locale', 'en')
+                ->andReturn('en');
+
+        $this->assertSame('en', $this->model->preferredLocale());
     }
 
 }

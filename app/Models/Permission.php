@@ -48,8 +48,9 @@ class Permission extends Model
             array_push($result, $model->name);
         }
 
-        if ($model->allParents) {
-            $result = array_merge($result, $this->parentArray($model->allParents));
+        $allParents = $model->allParents;
+        if ($allParents) {
+            $result = array_merge($result, $this->parentArray($allParents));
         }
 
         return $result;
@@ -67,8 +68,9 @@ class Permission extends Model
             array_push($result, $model->name);
         }
 
-        if ($model->allChilds->isNotEmpty()) {
-            foreach ($model->allChilds as $value) {
+        $allChilds = $model->allChilds;
+        if ($allChilds->isNotEmpty()) {
+            foreach ($allChilds as $value) {
                 $result = array_merge($result, $this->childArray($value));
             }
         }
