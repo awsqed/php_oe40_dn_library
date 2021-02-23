@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Models;
 
+use Mockery;
 use App\Models\Book;
 use App\Models\Category;
 use Tests\ModelTestCase;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CategoryTest extends ModelTestCase
 {
@@ -40,6 +40,8 @@ class CategoryTest extends ModelTestCase
     public function test_category_has_many_childs()
     {
         $this->assertHasMany('childs', Category::class, 'parent_id');
+        $this->assertHasMany('allChilds', Category::class, 'parent_id');
+        $this->assertEmpty($this->model->childArray());
     }
 
     public function test_category_has_many_books()
@@ -53,6 +55,17 @@ class CategoryTest extends ModelTestCase
         $this->model->name = $name;
 
         $this->assertSame($name, $this->model->breadcrumb);
+    }
+
+    public function test_category_can_get_nested_childs()
+    {
+        $model = Mockery::mock(Category::class .'[__get]');
+        $model->shouldReceive('__get')
+                ->once()
+                ->with('allChilds')
+                ->andReturn(collect([new Category()]));
+
+        $this->assertNotEmpty($model->childArray());
     }
 
 }

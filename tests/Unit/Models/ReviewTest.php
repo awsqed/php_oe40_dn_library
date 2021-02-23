@@ -37,6 +37,16 @@ class ReviewTest extends ModelTestCase
         ], $this->model->getDates());
     }
 
+    public function test_review_belongs_to_an_user()
+    {
+        $this->assertBelongsTo('user', User::class, 'user_id');
+    }
+
+    public function test_review_belongs_to_a_book()
+    {
+        $this->assertBelongsTo('book', Book::class, 'book_id');
+    }
+
     public function test_review_has_a_rating_text()
     {
         $this->model->rating = 4;

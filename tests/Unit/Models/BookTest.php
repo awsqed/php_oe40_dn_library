@@ -3,6 +3,7 @@
 namespace Tests\Unit\Models;
 
 use Closure;
+use Mockery;
 use App\Models\User;
 use App\Models\Book;
 use App\Models\Like;
@@ -12,6 +13,7 @@ use App\Models\Follow;
 use App\Models\Category;
 use Tests\ModelTestCase;
 use App\Models\Publisher;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 
 class BookTest extends ModelTestCase
@@ -27,6 +29,7 @@ class BookTest extends ModelTestCase
     {
         parent::tearDown();
         unset($this->model);
+        Mockery::close();
     }
 
     public function test_model_configuration()
@@ -119,14 +122,37 @@ class BookTest extends ModelTestCase
         $this->assertSame($default, $this->model->cover);
     }
 
+    public function test_book_title_is_in_title_case()
+    {
+        $title = 'foo bar';
+        $this->model->title = $title;
+
+        $this->assertSame(Str::title($title), $this->model->title);
+    }
+
     public function test_book_has_an_average_rating()
     {
         $this->assertSame(0, $this->model->avg_rating);
     }
 
-    public function test_book_can_print_average_rating_text()
+    public function test_book_can_print_average_rating_text_equals_to_zero()
     {
-        $this->assertSame('☆☆☆☆☆', $this->model->printAvgRatingText());
+        $model = Mockery::mock('App\Models\Book[getAvgRatingAttribute]');
+        $model->shouldReceive('getAvgRatingAttribute')
+                    ->once()
+                    ->andReturn(0);
+
+        $this->assertSame('☆☆☆☆☆', $model->printAvgRatingText());
+    }
+
+    public function test_book_cant_print_average_rating_text_bigger_than_zero()
+    {
+        $model = Mockery::mock('App\Models\Book[getAvgRatingAttribute]');
+        $model->shouldReceive('getAvgRatingAttribute')
+                    ->once()
+                    ->andReturn(1);
+
+        $this->assertSame('<span class="text-danger">★</span>☆☆☆☆', $model->printAvgRatingText());
     }
 
 }

@@ -9,7 +9,6 @@ use App\Models\Image;
 use App\Models\Author;
 use Tests\ModelTestCase;
 use App\Models\Publisher;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ImageTest extends ModelTestCase
 {

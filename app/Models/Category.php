@@ -54,8 +54,9 @@ class Category extends Model
             array_push($result, $model->id);
         }
 
-        if ($model->allChilds->isNotEmpty()) {
-            foreach ($model->allChilds as $value) {
+        $childs = $model->allChilds;
+        if ($childs->isNotEmpty()) {
+            foreach ($childs as $value) {
                 $result = array_merge($result, $this->childArray($value));
             }
         }
