@@ -109,14 +109,24 @@ class BorrowRequestRepository extends BaseRepository implements BorrowRequestRep
     {
         $configKey = 'app.borrow-request.status-code';
         $borrowRequest = $this->find($borrowRequestId);
+        $bookAmount = $borrowRequest->book->amount;
 
         $attributes = [];
         switch ($action) {
             case 'accept':
+                if ($bookAmount < 1) {
+                    abort(403);
+                }
+
                 $attributes['status'] = config("{$configKey}.accepted");
                 $attributes['processed_at'] = now();
+                $borrowRequest->book->amount = --$bookAmount;
                 break;
             case 'reject':
+                if ($bookAmount < 1) {
+                    $attributes['note'] = trans('books.out-of-stock');
+                }
+
                 $attributes['status'] = config("{$configKey}.rejected");
                 $attributes['processed_at'] = now();
                 break;
@@ -125,6 +135,7 @@ class BorrowRequestRepository extends BaseRepository implements BorrowRequestRep
                                 ? config("{$configKey}.returned-late")
                                 : config("{$configKey}.returned");
                 $attributes['returned_at'] = now();
+                $borrowRequest->book->amount = ++$bookAmount;
                 break;
             default:
                 return;
@@ -132,6 +143,7 @@ class BorrowRequestRepository extends BaseRepository implements BorrowRequestRep
 
         if ($borrowRequest->status !== $attributes['status']) {
             $this->update($borrowRequestId, $attributes);
+            $borrowRequest->push();
         }
     }
 

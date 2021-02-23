@@ -90,9 +90,7 @@
                     {{ trans('library.guest.review-message') }}
                 </div>
             @else
-                @php
-                    $repository = App::make(App\Repositories\Interfaces\ReviewRepositoryInterface::class);
-                @endphp
+                @inject('repository', 'App\Repositories\Interfaces\ReviewRepositoryInterface')
                 @if (!$repository->check($currentUserId, $book->id))
                     <div class="review-form">
                         <div class="form-group">

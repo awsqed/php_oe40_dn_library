@@ -1,29 +1,31 @@
 $('.borrow-table').on('click', '.btn-accept', {}, function () {
-    var brId = $(this).val();
-    window.axios.post('/dashboard/borrows/'+ brId +'/accept', {
-        'search': $('input[name=search]').val(),
-        'filter': $('select[name=filter] option:checked').val()
-    }).then(function (response) {
-        $('.borrow-table').html(response.data);
-    });
+    updateBorrowRequest($(this).val(), 'accept');
 });
 
 $('.borrow-table').on('click', '.btn-reject', {}, function () {
-    var brId = $(this).val();
-    window.axios.post('/dashboard/borrows/'+ brId +'/reject', {
-        'search': $('input[name=search]').val(),
-        'filter': $('select[name=filter] option:checked').val()
-    }).then(function (response) {
-        $('.borrow-table').html(response.data);
-    });
+    updateBorrowRequest($(this).val(), 'reject');
 });
 
 $('.borrow-table').on('click', '.btn-return', {}, function () {
-    var brId = $(this).val();
-    window.axios.post('/dashboard/borrows/'+ brId +'/return', {
-        'search': $('input[name=search]').val(),
-        'filter': $('select[name=filter] option:checked').val()
+    updateBorrowRequest($(this).val(), 'return');
+});
+
+$('.delete-borrow').click(function (e) {
+    e.preventDefault();
+
+    window.axios.delete('/dashboard/borrows/'+ $(this).attr('borrow-id'))
+                .then(function () {
+                    window.location.reload();
+                });
+});
+
+function updateBorrowRequest(borrowRequestId, action)
+{
+    window.axios.put('/dashboard/borrows/'+ borrowRequestId, {
+        action: action,
+        search: $('input[name=search]').val(),
+        filter: $('select[name=filter] option:checked').val()
     }).then(function (response) {
         $('.borrow-table').html(response.data);
     });
-});
+}

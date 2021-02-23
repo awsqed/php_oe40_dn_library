@@ -30,15 +30,22 @@
     <td class="align-middle">{{ $record->to }}</td>
     <td class="align-middle">{{ $record->returned_at }}</td>
     <td class="align-middle">{{ $record->status_text }}</td>
-    <td class="align-middle">{{ $record->note_text }}</td>
+    <td class="align-middle">
+        {{ $record->note_text }}
+        @if ($record->status_text == trans('library.borrow.processing') && $record->book->amount < 1)
+            <h5><span class="badge badge-danger">{{ trans('books.out-of-stock') }}</span></h5>
+        @endif
+    </td>
     @can('update-borrow-request')
         <td class="align-middle text-left">
             @if ($record->status === null)
-                <button class="btn btn-link btn-accept p-0 text-success text-uppercase font-weight-bold" value="{{ $record->id }}">
-                    <i class="fas fa-check-circle mr-1"></i>
-                    {{ trans('borrows.accept') }}
-                </button>
-                <br/>
+                @if ($record->book->amount > 0)
+                    <button class="btn btn-link btn-accept p-0 text-success text-uppercase font-weight-bold" value="{{ $record->id }}">
+                        <i class="fas fa-check-circle mr-1"></i>
+                        {{ trans('borrows.accept') }}
+                    </button>
+                    <br/>
+                @endif
                 <button class="btn btn-link btn-reject p-0 text-danger text-uppercase font-weight-bold" value="{{ $record->id }}">
                     <i class="fas fa-times-circle mr-1"></i>
                     {{ trans('borrows.reject') }}

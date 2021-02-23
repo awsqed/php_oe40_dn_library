@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\BorrowRequestRepositoryInterface;
 
@@ -35,14 +36,28 @@ class BorrowRequestController extends Controller
         return view('dashboard.borrows.index', compact('borrowRequests', 'statusCode', 'selection'));
     }
 
-    public function update(Request $request, $borrowRequestId, $action)
+    public function update(Request $request, $borrowRequestId)
     {
         $this->authorize('update-borrow-request');
 
-        $this->repository->updateBorrowRequest($borrowRequestId, $action);
+        $this->repository->updateBorrowRequest($borrowRequestId, $request->action);
         $borrowRequests = $this->repository->search($request->search, $request->filter);
 
         return view('layouts.dashboard.borrow-requests-table', compact('borrowRequests'))->render();
+    }
+
+    public function destroy($borrowRequestId)
+    {
+        $borrowRequest = $this->repository->find($borrowRequestId);
+        if (!$borrowRequest->user()->is(Auth::user())) {
+            abort(403);
+        }
+
+        if (!is_null($borrowRequest->status)) {
+            abort(403);
+        }
+
+        $this->repository->delete($borrowRequestId);
     }
 
 }

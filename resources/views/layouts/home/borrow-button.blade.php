@@ -1,8 +1,5 @@
 @auth
-    @php
-        $repository = App::make(App\Repositories\Interfaces\BorrowRequestRepositoryInterface::class);
-    @endphp
-
+    @inject('repository', 'App\Repositories\Interfaces\BorrowRequestRepositoryInterface')
     @if ($repository->getLatestProcessing($currentUserId, $book->id))
         <a href="{{ route('library.borrow.history') }}" class="text-uppercase text-primary font-weight-bold">
             {{ trans('library.borrow.under-process') }}
