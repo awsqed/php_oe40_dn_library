@@ -3,9 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\Str;
-use App\Models\BorrowRequest;
 use Illuminate\Support\ServiceProvider;
-use App\Observers\BorrowRequestObserver;
 use ConsoleTVs\Charts\Registrar as Charts;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -25,8 +23,6 @@ class AppServiceProvider extends ServiceProvider
             'author' => 'App\Models\Author',
             'publisher' => 'App\Models\Publisher',
         ]);
-
-        BorrowRequest::observe(BorrowRequestObserver::class);
 
         $chartList = [];
         $chartPath = app_path() .'/Charts';

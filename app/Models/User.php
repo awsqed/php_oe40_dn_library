@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Traits\HasImage;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Notifications\Notifiable;
@@ -24,22 +23,6 @@ class User extends Authenticatable implements HasLocalePreference
         'remember_token',
     ];
 
-    protected static function booted()
-    {
-        // Delete all related records before deleting the user
-        static::deleting(function($user) {
-            DB::transaction(function() use ($user) {
-                $user->image()->delete();
-                $user->permissions()->detach();
-                $user->bookBorrowRequests()->detach();
-                $user->likes()->forceDelete();
-                $user->followings()->forceDelete();
-                $user->followers()->forceDelete();
-                $user->reviews()->detach();
-            });
-        });
-    }
-
     public function getAvatarAttribute()
     {
         return $this->image;
@@ -54,11 +37,13 @@ class User extends Authenticatable implements HasLocalePreference
     {
         $cacheTime = config('app.cache-time');
         $model = Cache::remember("{$permission}", $cacheTime, function () use ($permission) {
+            // @codeCoverageIgnoreStart
             try {
                 return Permission::where('name', $permission)->firstOrFail();
             } catch (ModelNotFoundException $e) {
                 return null;
             }
+            // @codeCoverageIgnoreEnd
         });
 
         if (!$model) {
@@ -67,11 +52,14 @@ class User extends Authenticatable implements HasLocalePreference
 
         $userPermissions = $this->permissions();
         if (!$recursive) {
+            // @codeCoverageIgnoreStart
             return $userPermissions->where('name', $permission)->get()->isNotEmpty();
+            // @codeCoverageIgnoreEnd
         }
 
         $cacheKey = $this->id ."-{$permission}";
         $hasPermission = Cache::remember($cacheKey, $cacheTime, function () use ($userPermissions, $model, $permission) {
+            // @codeCoverageIgnoreStart
             return $userPermissions
                     ->whereIn(
                         'name',
@@ -84,6 +72,7 @@ class User extends Authenticatable implements HasLocalePreference
                     )
                     ->get()
                     ->isNotEmpty();
+            // @codeCoverageIgnoreEnd
         });
 
         return $hasPermission;

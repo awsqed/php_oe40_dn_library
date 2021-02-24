@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Traits\HasImage;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 
 class Author extends Model
@@ -14,18 +13,6 @@ class Author extends Model
     public $timestamps = false;
 
     protected $guarded = [];
-
-    protected static function booted()
-    {
-        // Delete all related records before deleting the user
-        static::deleting(function($user) {
-            DB::transaction(function() use ($user) {
-                $user->image()->delete();
-                $user->books()->delete();
-                $user->followers()->delete();
-            });
-        });
-    }
 
     public function getAvatarAttribute()
     {
