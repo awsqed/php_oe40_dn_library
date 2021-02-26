@@ -2,6 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\Author;
+use App\Models\BorrowRequest;
+use App\Models\Category;
+use App\Models\User;
+use App\Observers\AuthorObserver;
+use App\Observers\BorrowRequestObserver;
+use App\Observers\CategoryObserver;
+use App\Observers\UserObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -27,6 +35,9 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        User::observe(UserObserver::class);
+        Author::observe(AuthorObserver::class);
+        Category::observe(CategoryObserver::class);
+        BorrowRequest::observe(BorrowRequestObserver::class);
     }
 }
