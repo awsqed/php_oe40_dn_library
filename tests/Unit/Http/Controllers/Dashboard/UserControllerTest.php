@@ -2,18 +2,18 @@
 
 namespace Tests\Unit\Http\Controllers\Dashboard;
 
-use Mockery;
-use Tests\TestCase;
-use App\Models\User;
-use App\Models\Permission;
-use App\Http\Requests\UserRequest;
-use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Dashboard\UserController;
-use Symfony\Component\HttpFoundation\ParameterBag;
-use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Http\Requests\UserRequest;
+use App\Models\Permission;
+use App\Models\User;
 use App\Repositories\Interfaces\PermissionRepositoryInterface;
+use App\Repositories\Interfaces\UserRepositoryInterface;
+use Illuminate\Support\Facades\Gate;
+use Mockery;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Tests\ControllerTestCase;
 
-class UserControllerTest extends TestCase
+class UserControllerTest extends ControllerTestCase
 {
 
     public function setUp(): void
@@ -28,14 +28,6 @@ class UserControllerTest extends TestCase
     {
         parent::tearDown();
         Mockery::close();
-    }
-
-    public function mockRepository($mockClass)
-    {
-        $mock = Mockery::mock($mockClass);
-        $this->app->instance($mockClass, $mock);
-
-        return $mock;
     }
 
     public function test_view_all_users()
@@ -70,8 +62,6 @@ class UserControllerTest extends TestCase
 
     public function test_can_store_user()
     {
-        $this->userRepo->shouldReceive('createUser')->once();
-
         $userRequest = new UserRequest();
         $userRequest->headers->set('content-type', 'application/json');
         $userRequest->setJson(new ParameterBag([
@@ -79,6 +69,11 @@ class UserControllerTest extends TestCase
             'email' => 'foobar@example.com',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
         ]));
+
+        $this->userRepo->shouldReceive('createUser')
+                        ->once()
+                        ->with($userRequest);
+
         $response = $this->controller->store($userRequest);
 
         $this->assertEquals(route('users.index'), $response->headers->get('Location'));
@@ -97,6 +92,7 @@ class UserControllerTest extends TestCase
             ->andReturn(true);
         $this->userRepo->shouldReceive('find')
                 ->once()
+                ->with(0)
                 ->andReturn($user);
         $this->permRepo->shouldReceive('all')
                 ->once()
@@ -115,10 +111,10 @@ class UserControllerTest extends TestCase
     {
         $user = new User();
 
-        Gate::shouldReceive('authorize', 'allows')
-            ->once();
+        Gate::shouldReceive('authorize', 'allows')->once();
         $this->userRepo->shouldReceive('find')
                 ->once()
+                ->with(0)
                 ->andReturn($user);
         $this->permRepo->shouldNotReceive('all');
 
@@ -133,8 +129,6 @@ class UserControllerTest extends TestCase
 
     public function test_can_update_user()
     {
-        $this->userRepo->shouldReceive('updateUser')->once();
-
         $userRequest = new UserRequest();
         $userRequest->headers->set('content-type', 'application/json');
         $userRequest->setJson(new ParameterBag([
@@ -142,6 +136,11 @@ class UserControllerTest extends TestCase
             'email' => 'foobar@example.com',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
         ]));
+
+        $this->userRepo->shouldReceive('updateUser')
+                        ->once()
+                        ->with(0, $userRequest);
+
         $response = $this->controller->update($userRequest, 0);
 
         $this->assertEquals(route('users.index'), $response->headers->get('Location'));
@@ -150,7 +149,9 @@ class UserControllerTest extends TestCase
     public function test_can_destroy_user()
     {
         Gate::shouldReceive('authorize')->once();
-        $this->userRepo->shouldReceive('deleteUser')->once();
+        $this->userRepo->shouldReceive('deleteUser')
+                        ->once()
+                        ->with(0);
 
         $response = $this->controller->destroy(0);
     }
